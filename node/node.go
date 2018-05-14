@@ -4,7 +4,7 @@ import (
 	"github.com/mathetake/gann/item"
 )
 
-// identifier for nodes
+// ID ... identifier for nodes
 type ID int32
 
 // Node ... node for tree
@@ -14,6 +14,12 @@ type Node struct {
 	vec item.Vector
 	// children of node. If len ==0 => it is leaf node.
 	children []ID
+
+	// descendants items
+	descendants []item.Item
+
+	// # of descendants
+	nDescendants int
 }
 
 func (n *Node) isLeaf () bool {

@@ -2,13 +2,15 @@ package index
 
 import "github.com/mathetake/gann/item"
 
-func (idx *Index) build() {}
+// Build ... build index forest.
+func (idx *Index) Build() {}
 
-
-func (idx *Index) getANNbyItem (id item.ID, num int, searchBucket int) (ann []int32, err error){
+// GetANNbyItem ... get ANNs by a item.Item
+func (idx *Index) GetANNbyItem (id item.ID, num int, searchBucket int) (ann []int32, err error){
 	return ann, nil
 }
 
-func (idx *Index) getANNbyVector (v []float32, num int, searchBucket int) (ann []int32, err error){
+// GetANNbyVector ... get ANNs by a vector
+func (idx *Index) GetANNbyVector (v []float32, num int, searchBucket int) (ann []int32, err error){
 	return ann, nil
 }

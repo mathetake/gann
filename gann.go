@@ -5,11 +5,10 @@ import (
 	"github.com/mathetake/gann/index"
 )
 
-
 type GannIndex interface {
-	build() // build search trees.
-	getANNbyItem (id item.ID, num int, searchBucket int) (ann []int32, err error)
-	getANNbyVector (v []float32, num int, searchBucket int) (ann []int32, err error)
+	Build() // build search trees.
+	GetANNbyItem (id item.ID, num int, searchBucket int) (ann []int32, err error)
+	GetANNbyVector (v []float32, num int, searchBucket int) (ann []int32, err error)
 }
 
 // GetIndex ... get index (composed of trees, nodes, etc.)
