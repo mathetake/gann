@@ -67,11 +67,11 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 
 	for i, s := range []string{left, right} {
 		if len(ds[s]) >= k {
-			nv1, err := item.GetNormalVectorOfSplittingHyperPlane(ds[s])
+			nv, err := item.GetNormalVectorOfSplittingHyperPlane(ds[s])
 			if err != nil {
 				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 			}
-			cMap[s].Vec = nv1
+			cMap[s].Vec = nv
 			cMap[s].ID = n.ID + ID(i)
 			cMap[s].nDescendants = len(ds[s])
 

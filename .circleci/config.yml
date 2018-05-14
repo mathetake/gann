@@ -7,5 +7,7 @@ jobs:
       - image: golang:1.10
     steps:
       - checkout
+      - run: go get -u github.com/golang/dep/...
+      - run: dep ensure
       - run: go test -v -race ./...
       - run: go build .
