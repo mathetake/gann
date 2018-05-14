@@ -7,7 +7,7 @@ gann (go-approximate-nearest-neighbor) is a library for approximate nearest neig
 
 # usage
 
-```
+```golang
 import "github.com/mathetake/gann"
     
 func main () {
