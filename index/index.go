@@ -21,8 +21,8 @@ type Index struct {
 	itemIDToItem map[int64]item.Item
 
 	// nodes
-	nodes        []*node.Node
-	nodeIDToNode map[int64]*node.Node
+	Nodes        []*node.Node
+	nodeIDToNode map[int]*node.Node
 
 	// roots of trees
 	roots []*node.Node

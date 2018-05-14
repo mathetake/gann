@@ -3,6 +3,7 @@ package node
 import (
 	"github.com/mathetake/gann/item"
 	"github.com/pkg/errors"
+	"github.com/mathetake/gann/index"
 )
 
 const (
@@ -25,6 +26,8 @@ type Node struct {
 
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
 	Leaf []int64
+
+	Forest *index.Index
 }
 
 func (n *Node) IsLeaf() bool {
@@ -32,8 +35,7 @@ func (n *Node) IsLeaf() bool {
 }
 
 func (n *Node) Build(its []item.Item, k int) error {
-	// NOTE: len(its) must equal nDescendants
-	if len(its) < k {
+	if n.NDescendants < k {
 		ids := make([]int64, len(its))
 		for i, it := range its {
 			ids[i] = it.ID
@@ -69,23 +71,18 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 			}
 			cMap[s].Vec = nv
-			cMap[s].ID = n.ID + i
-			cMap[s].NDescendants = len(ds[s])
-
-			// build children nodes recursively
-			err = cMap[s].Build(ds[s], k)
-			if err != nil {
-				return errors.Wrap(err, "Build failed.")
-			}
-			// append children.
-			n.Children = append(n.Children, cMap[s])
-		} else {
-			err := cMap[s].Build(ds[s], k)
-			if err != nil {
-				return errors.Wrap(err, "Build failed.")
-			}
-			n.Children = append(n.Children, cMap[s])
 		}
+		cMap[s].ID = n.ID + i
+		cMap[s].NDescendants = len(ds[s])
+		// build children nodes recursively
+		err := cMap[s].Build(ds[s], k)
+		if err != nil {
+			return errors.Wrap(err, "Build failed.")
+		}
+
+		// append children.
+		n.Children = append(n.Children, cMap[s])
+		n.Forest.Nodes = append(n.Forest.Nodes, cMap[s])
 	}
 	return nil
 }

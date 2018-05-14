@@ -6,8 +6,8 @@ import (
 
 type GannIndex interface {
 	Build() error // build search trees.
-	GetANNbyItem(id int64, num int, bucketScale int) (ann []int64, err error)
-	GetANNbyVector(v []float32, num int, bucketScale int) (ann []int64, err error)
+	GetANNbyItem(id int64, num int, bucketScale float64) (ann []int64, err error)
+	GetANNbyVector(v []float32, num int, bucketScale float64) (ann []int64, err error)
 }
 
 // GetIndex ... get index (composed of trees, nodes, etc.)
