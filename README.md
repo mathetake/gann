@@ -2,12 +2,11 @@
 
 gann (go-approximate-nearest-neighbor) is a library for approximate nearest neighbor search written in golang.
 
-
-
+The implemented algorithm is truly inspired by Annoy (https://github.com/spotify/annoy).
 
 # usage
 
-```
+```golang
 import "github.com/mathetake/gann"
     
 func main () {
