@@ -43,7 +43,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 			Priority: float32(math.Inf(1)),
 		}
 	}
-	heap.Init(&pq);
+	heap.Init(&pq)
 
 	i := idx.nTree + 1
 	for {
@@ -56,14 +56,14 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 		} else {
 			ip := item.DotProduct(n.Vec, v)
 			heap.Push(&pq, node.QueueItem{
-				ID: n.Children[0].ID,
-				Index: i,
+				ID:       n.Children[0].ID,
+				Index:    i,
 				Priority: item.Min(d, ip),
 			})
 			i++
 			heap.Push(&pq, node.QueueItem{
-				ID: n.Children[1].ID,
-				Index: i,
+				ID:       n.Children[1].ID,
+				Index:    i,
 				Priority: item.Min(d, -ip),
 			})
 			i++
@@ -107,7 +107,7 @@ func (idx *Index) buildRootNodes() error {
 			ID:           i + n*i,
 			Vec:          nv,
 			NDescendants: len(idx.items),
-			Forest: idx,
+			Forest:       idx.Nodes,
 		}
 		idx.roots = append(idx.roots, r)
 	}

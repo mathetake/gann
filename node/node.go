@@ -3,7 +3,6 @@ package node
 import (
 	"github.com/mathetake/gann/item"
 	"github.com/pkg/errors"
-	"github.com/mathetake/gann/index"
 )
 
 const (
@@ -27,7 +26,7 @@ type Node struct {
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
 	Leaf []int64
 
-	Forest *index.Index
+	Forest []*Node
 }
 
 func (n *Node) IsLeaf() bool {
@@ -82,7 +81,7 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 
 		// append children.
 		n.Children = append(n.Children, cMap[s])
-		n.Forest.Nodes = append(n.Forest.Nodes, cMap[s])
+		n.Forest = append(n.Forest, cMap[s])
 	}
 	return nil
 }
