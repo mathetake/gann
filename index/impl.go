@@ -53,4 +53,5 @@ func (idx *Index) buildRootNodes() error {
 		}
 		idx.roots = append(idx.roots, r)
 	}
+	return nil
 }
