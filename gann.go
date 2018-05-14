@@ -2,13 +2,12 @@ package gann
 
 import (
 	"github.com/mathetake/gann/index"
-	"github.com/mathetake/gann/item"
 )
 
 type GannIndex interface {
 	Build() error // build search trees.
-	GetANNbyItem(id item.ID, num int, searchBucket int) (ann []int32, err error)
-	GetANNbyVector(v []float32, num int, searchBucket int) (ann []int32, err error)
+	GetANNbyItem(id int64, num int, bucketScale int) (ann []int64, err error)
+	GetANNbyVector(v []float32, num int, bucketScale int) (ann []int64, err error)
 }
 
 // GetIndex ... get index (composed of trees, nodes, etc.)

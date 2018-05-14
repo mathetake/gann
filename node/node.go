@@ -10,12 +10,9 @@ const (
 	right = "right"
 )
 
-// ID ... identifier for nodes
-type ID int32
-
 // Node ... node for tree
 type Node struct {
-	ID ID
+	ID int
 
 	// the normal vector of the hyper plane which splits the space, represented by the node
 	Vec item.Vector
@@ -27,7 +24,7 @@ type Node struct {
 	Children []*Node
 
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
-	Leaf []item.ID
+	Leaf []int64
 }
 
 func (n *Node) IsLeaf() bool {
@@ -37,7 +34,7 @@ func (n *Node) IsLeaf() bool {
 func (n *Node) Build(its []item.Item, k int) error {
 	// NOTE: len(its) must equal nDescendants
 	if len(its) < k {
-		ids := make([]item.ID, len(its))
+		ids := make([]int64, len(its))
 		for i, it := range its {
 			ids[i] = it.ID
 		}
@@ -72,7 +69,7 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 			}
 			cMap[s].Vec = nv
-			cMap[s].ID = n.ID + ID(i)
+			cMap[s].ID = n.ID + i
 			cMap[s].NDescendants = len(ds[s])
 
 			// build children nodes recursively
