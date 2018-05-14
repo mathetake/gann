@@ -21,7 +21,7 @@ type Node struct {
 	Vec item.Vector
 
 	// # of descendants items
-	nDescendants int
+	NDescendants int
 
 	// children of node. If len equals 0, then it is leaf node.
 	Children []*Node
@@ -73,7 +73,7 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 			}
 			cMap[s].Vec = nv
 			cMap[s].ID = n.ID + ID(i)
-			cMap[s].nDescendants = len(ds[s])
+			cMap[s].NDescendants = len(ds[s])
 
 			// build children nodes recursively
 			err = cMap[s].Build(ds[s], k)

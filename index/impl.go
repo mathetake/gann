@@ -25,14 +25,32 @@ func (idx *Index) getANNbyVector(v []float32, num int, searchBucket int) (ann []
 }
 
 // Build ... build index forest.
-func (idx *Index) Build() {
-	/*
-		1. build root nodes.
-		2. build forests by execute `node.Build` method of root nodes.
-	*/
+func (idx *Index) Build() error {
+	err := idx.buildRootNodes()
+	if err != nil {
+		return errors.Wrapf(err, "buildRootNodes failed.")
+	}
+	for _, rn := range idx.roots {
+		err := rn.Build(idx.items, idx.k)
+		if err != nil {
+			return errors.Wrapf(err, "Build failed.")
+		}
+	}
+	return nil
 }
 
-func (idx *Index) buildRootNodes() {}
-
-// build a forest with a given root node.Node
-func (idx *Index) buildForest(root *node.Node) {}
+func (idx *Index) buildRootNodes() error {
+	n := idx.getNItems()
+	for i := 0; i < idx.nTree; i++ {
+		nv, err := item.GetNormalVectorOfSplittingHyperPlane(idx.items)
+		if err != nil {
+			return errors.Wrapf(err, "GetNormalVectorOfSplittingHyperPlane failed.")
+		}
+		r := &node.Node{
+			ID:           node.ID(i + n*i),
+			Vec:          nv,
+			NDescendants: len(idx.items),
+		}
+		idx.roots = append(idx.roots, r)
+	}
+}

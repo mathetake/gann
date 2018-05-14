@@ -28,8 +28,16 @@ type Index struct {
 	roots []*node.Node
 }
 
+func (idx *Index) getNItems() int {
+	return len(idx.items)
+}
+
 // Initialize ... initialize Index struct.
 func Initialize(rawItems [][]float32, d int, nTree int, k int) (*Index, error) {
+	if k >= len(rawItems) {
+		panic("k must be smaller than len(rawItems).")
+	}
+
 	its := make([]item.Item, len(rawItems))
 	idToItem := make(map[item.ID]item.Item, len(rawItems))
 	for i, v := range rawItems {
