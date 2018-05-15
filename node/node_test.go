@@ -87,7 +87,7 @@ func TestBuildChildren1(t *testing.T) {
 	assert.Equal(t, []int64{5, 6, 7, 8, 9}, rightChild.Leaf)
 }
 
-// Only one of children is supposed to be child
+// Only one of children is supposed to be leaf node
 func TestBuildChildren2(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 	k := 6
