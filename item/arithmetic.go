@@ -1,10 +1,10 @@
 package item
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
-	"fmt"
 )
 
 const (
@@ -45,26 +45,23 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 
 	rand.Seed(time.Now().UnixNano())
 
-	nvs := make([]Vector, iter)
+	ret := make([]float32, dim)
 	for i := 0; i < iter; i++ {
 		k := rand.Intn(lvs)
 		l := rand.Intn(lvs - 1)
 		if k == l {
 			l++
 		}
-		diff := make([]float32, dim)
 		for m := 0; m < dim; m++ {
-			diff[m] = vs[k][m] - vs[l][m]
+			ret[m] += vs[k][m] - vs[l][m]
 		}
-		nvs[i] = diff
 	}
 
-	ret := make([]float32, dim)
 	for i := 0; i < dim; i++ {
-		for _, v := range nvs {
-			ret[i] += v[i] / float32(len(nvs))
-		}
+		ret[i] /= float32(iter)
 	}
 
+	// normalize
+	Normalize(ret)
 	return ret
 }

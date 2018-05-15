@@ -103,6 +103,7 @@ func _getItems(dim int, l int) [][]float32 {
 }
 
 func _getRandomVector(dim int) []float32 {
+	rand.Seed(time.Now().UnixNano())
 	v := make([]float32, dim)
 	for j := 0; j < dim; j++ {
 		v[j] = rand.Float32()

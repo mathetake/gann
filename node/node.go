@@ -77,8 +77,19 @@ func (n *Node) buildChildren(its []item.Item, k int, d int) error {
 	}
 
 	for _, s := range []string{left, right} {
+		if len(dItems[s]) == 0 {
+			vs := make([]item.Vector, len(its))
+			for i, it := range its {
+				vs[i] = it.Vec
+			}
+			n.Vec = item.GetNormalVectorOfSplittingHyperPlane(vs, d)
+			return n.buildChildren(its, k, d)
+		}
+	}
+
+	for _, s := range []string{left, right} {
 		if len(dItems[s]) >= k {
-			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], len(n.Vec))
+			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], d)
 			copy(cMap[s].Vec, nv)
 		}
 		cMap[s].ID = uuid.New().String()
