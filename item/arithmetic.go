@@ -14,20 +14,19 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 	return ret
 }
 
-func GetNormalVectorOfSplittingHyperPlane(its []Item) (nv Vector, err error) {
-	cs, err := twoMeans(its)
+func GetNormalVectorOfSplittingHyperPlane(vs []Vector) (nv Vector, err error) {
+	c1, c2, err := twoMeans(vs)
 	if err != nil {
 		return nv, errors.Wrap(err, "TwoMeans failed.")
 	}
-	nv = subtract(cs[0], cs[1])
+	nv = subtract(c1, c2)
 	return nv, err
 }
 
 // Given a set of vectors, do 2-means algorithm and returns its centroids.
 // TODO: to be implemented
-func twoMeans(its []Item) (cs map[int]Vector, err error) {
-
-	return cs, nil
+func twoMeans(vs []Vector) (c1 Vector, c2 Vector, err error) {
+	return c1, c2, nil
 }
 
 func subtract(v1, v2 Vector) Vector {

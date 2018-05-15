@@ -54,28 +54,31 @@ func (n *Node) buildChildren(its []item.Item, k int) error {
 	var cMap map[string]*Node
 
 	// split descendants
-	ds := map[string][]item.Item{}
+	dItems := map[string][]item.Item{}
+	dVectors := map[string][]item.Vector{}
 	for _, it := range its {
 		if item.DotProduct(n.Vec, it.Vec) > 0 {
-			ds[left] = append(ds[left], it)
+			dItems[left] = append(dItems[left], it)
+			dVectors[left] = append(dVectors[left], it.Vec)
 		} else {
-			ds[right] = append(ds[right], it)
+			dItems[right] = append(dItems[right], it)
+			dVectors[right] = append(dVectors[right], it.Vec)
 		}
 	}
 
 	for i, s := range []string{left, right} {
-		if len(ds[s]) >= k {
-			nv, err := item.GetNormalVectorOfSplittingHyperPlane(ds[s])
+		if len(dItems[s]) >= k {
+			nv, err := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s])
 			if err != nil {
 				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 			}
 			cMap[s].Vec = nv
 		}
 		cMap[s].ID = n.ID + i
-		cMap[s].NDescendants = len(ds[s])
+		cMap[s].NDescendants = len(dItems[s])
 		cMap[s].Forest = n.Forest
 		// build children nodes recursively
-		err := cMap[s].Build(ds[s], k)
+		err := cMap[s].Build(dItems[s], k)
 		if err != nil {
 			return errors.Wrap(err, "Build failed.")
 		}

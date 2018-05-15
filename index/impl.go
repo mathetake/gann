@@ -81,14 +81,14 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 	// 3.
 	idToDist := make(map[int64]float32, len(annMap))
 	ann := make([]int64, 0, len(annMap))
-	for id, _ := range annMap {
+	for id := range annMap {
 		ann = append(ann, id)
 		idToDist[id] = item.DotProduct(idx.itemIDToItem[id].Vec, v)
 	}
 
 	// 4.
-	sort.Slice(ann, func (i, j int) bool {
-		return - idToDist[ann[i]] < - idToDist[ann[j]]
+	sort.Slice(ann, func(i, j int) bool {
+		return -idToDist[ann[i]] < -idToDist[ann[j]]
 	})
 
 	// 5.
@@ -120,8 +120,12 @@ func (idx *Index) Build() error {
 
 func (idx *Index) buildRootNodes() error {
 	n := idx.getNItems()
+	vecs := make([]item.Vector, len(idx.itemIDToItem))
+	for i, it := range idx.items {
+		vecs[i] = it.Vec
+	}
 	for i := 0; i < idx.nTree; i++ {
-		nv, err := item.GetNormalVectorOfSplittingHyperPlane(idx.items)
+		nv, err := item.GetNormalVectorOfSplittingHyperPlane(vecs)
 		if err != nil {
 			return errors.Wrapf(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 		}
@@ -135,7 +139,6 @@ func (idx *Index) buildRootNodes() error {
 	}
 	return nil
 }
-
 
 // for float32 type
 func min(v1, v2 float32) float32 {
