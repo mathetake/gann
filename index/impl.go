@@ -6,10 +6,11 @@ import (
 	"github.com/mathetake/gann/node"
 	"github.com/pkg/errors"
 	"math"
+	"sort"
 )
 
 // GetANNbyItem ... get ANNs by a item.Item
-func (idx *Index) GetANNbyItem(id int64, num int, searchBucket float64) (ann []int64, err error) {
+func (idx *Index) GetANNbyItemID(id int64, num int, searchBucket float64) (ann []int64, err error) {
 	it, ok := idx.itemIDToItem[id]
 	if !ok {
 		return ann, errors.Errorf("Item not found for %v", id)
@@ -26,13 +27,13 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 	/*
 		1. insert root nodes into the priority queue
 		2. search all trees until len(`ann`) is enough.
-		3. remove duplicates in `ann`.
-		4. calculate actual distances to each elements in ann from v.
-		5. sort `ann` by distances.
-		6. Return the top `num` ones.
+		3. calculate actual distances to each elements in ann from v.
+		4. sort `ann` by distances.
+		5. Return the top `num` ones.
 	*/
 
-	ann := make([]int64, 0, int(float64(num)*bucketScale)) // TODO: to be tuned
+	annMap := make(map[int64]interface{}, int(float64(num)*bucketScale))
+
 	pq := node.PriorityQueue{}
 
 	// 1.
@@ -45,6 +46,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 	}
 	heap.Init(&pq)
 
+	// 2.
 	i := idx.nTree + 1
 	for {
 		q := pq.Pop().(node.QueueItem)
@@ -52,7 +54,9 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 		n := idx.nodeIDToNode[q.ID]
 
 		if n.NDescendants < idx.k || n.IsLeaf() {
-			ann = append(ann, n.Leaf...)
+			for _, id := range n.Leaf {
+				annMap[id] = true
+			}
 		} else {
 			ip := item.DotProduct(n.Vec, v)
 			heap.Push(&pq, node.QueueItem{
@@ -69,9 +73,27 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 			i++
 		}
 
-		if len(ann) >= num || len(pq) == 0 {
+		if len(annMap) >= num || len(pq) == 0 {
 			break
 		}
+	}
+
+	// 3.
+	idToDist := make(map[int64]float32, len(annMap))
+	ann := make([]int64, 0, len(annMap))
+	for id, _ := range annMap {
+		ann = append(ann, id)
+		idToDist[id] = item.DotProduct(idx.itemIDToItem[id].Vec, v)
+	}
+
+	// 4.
+	sort.Slice(ann, func (i, j int) bool {
+		return - idToDist[ann[i]] < - idToDist[ann[j]]
+	})
+
+	// 5.
+	if len(ann) > num {
+		ann = ann[:num]
 	}
 	return ann, nil
 }
