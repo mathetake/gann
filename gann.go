@@ -11,6 +11,6 @@ type GannIndex interface {
 }
 
 // GetIndex ... get index (composed of trees, nodes, etc.)
-func GetIndex(items [][]float32, d int, nT int, k int) (GannIndex, error) {
-	return index.Initialize(items, d, nT, k)
+func GetIndex(items [][]float32, d int, nT int, k int, normalize bool) (GannIndex, error) {
+	return index.Initialize(items, d, nT, k, normalize)
 }

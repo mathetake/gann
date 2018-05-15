@@ -1,6 +1,7 @@
 package item
 
 import (
+	"math"
 	"math/rand"
 	"time"
 )
@@ -8,6 +9,19 @@ import (
 const (
 	minIteration = 20
 )
+
+func Normalize(v1 Vector) {
+	var n32 float32
+	for _, v := range v1 {
+		n32 += v * v
+	}
+	n64 := math.Sqrt(float64(n32))
+	n32 = float32(n64)
+
+	for i := 0; i < len(v1); i++ {
+		v1[i] = v1[i] / n32
+	}
+}
 
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {

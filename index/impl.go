@@ -151,7 +151,7 @@ func (idx *Index) buildRootNodes() error {
 	return nil
 }
 
-// for float32 type
+// for float32
 func min(v1, v2 float32) float32 {
 	if v1 > v2 {
 		return v2

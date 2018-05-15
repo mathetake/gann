@@ -66,6 +66,7 @@ func BenchmarkGetANNByVector3(b *testing.B) {
 		bucketScale: 2,
 		searchNum:   500,
 	}
+
 	gIDx := _getTestIndex(&tmpl)
 
 	b.ResetTimer()
@@ -82,7 +83,7 @@ func _getTestIndex(tmpl *benchTemplate) GannIndex {
 	its := _getItems(tmpl.dim, tmpl.nItem)
 
 	// create index
-	gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k)
+	gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
 	if err != nil {
 		panic(err)
 	}
