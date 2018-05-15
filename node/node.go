@@ -68,7 +68,7 @@ func (n *Node) buildChildren(its []item.Item, k int) error {
 
 	for i, s := range []string{left, right} {
 		if len(dItems[s]) >= k {
-			nv, err := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s])
+			nv, err := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], len(n.Vec))
 			if err != nil {
 				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 			}

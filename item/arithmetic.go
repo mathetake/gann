@@ -1,9 +1,5 @@
 package item
 
-import (
-	"github.com/pkg/errors"
-)
-
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {
 		panic("Dimension mismatch.")
@@ -14,28 +10,16 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 	return ret
 }
 
-func GetNormalVectorOfSplittingHyperPlane(vs []Vector) (nv Vector, err error) {
-	c1, c2, err := twoMeans(vs)
-	if err != nil {
-		return nv, errors.Wrap(err, "TwoMeans failed.")
+// get normal vector which is perpendicular to the splitting hyperplane.
+// We chose the vector so that it is the average vectro of a given set of data points.
+func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) (nv Vector, err error) {
+	for _, v := range vs {
+		for i:= 0; i < dim; i++ {
+			nv[i] += v[i]
+		}
 	}
-	nv = subtract(c1, c2)
+	for i:= 0; i < dim; i++ {
+		nv[i] /= float32(len(vs))
+	}
 	return nv, err
-}
-
-// Given a set of vectors, do 2-means algorithm and returns its centroids.
-// TODO: to be implemented
-func twoMeans(vs []Vector) (c1 Vector, c2 Vector, err error) {
-	return c1, c2, nil
-}
-
-func subtract(v1, v2 Vector) Vector {
-	if len(v1) != len(v2) {
-		panic("dimension mimatch")
-	}
-	v := make([]float32, len(v1))
-	for i := 0; i < len(v1); i++ {
-		v[i] = v1[i] - v2[i]
-	}
-	return Vector(v)
 }

@@ -125,7 +125,7 @@ func (idx *Index) buildRootNodes() error {
 		vecs[i] = it.Vec
 	}
 	for i := 0; i < idx.nTree; i++ {
-		nv, err := item.GetNormalVectorOfSplittingHyperPlane(vecs)
+		nv, err := item.GetNormalVectorOfSplittingHyperPlane(vecs, idx.dim)
 		if err != nil {
 			return errors.Wrapf(err, "GetNormalVectorOfSplittingHyperPlane failed.")
 		}
