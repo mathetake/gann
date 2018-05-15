@@ -4,6 +4,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
+	"fmt"
 )
 
 const (
@@ -25,7 +26,7 @@ func Normalize(v1 Vector) {
 
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {
-		panic("Dimension mismatch.")
+		panic(fmt.Sprintf("Dimension mismatch: %d != %d", len(v1), len(v2)))
 	}
 	for i := 0; i < len(v1); i++ {
 		ret += v1[i] * v2[i]
