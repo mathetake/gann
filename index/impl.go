@@ -2,7 +2,6 @@ package index
 
 import (
 	"container/heap"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/mathetake/gann/node"
@@ -49,7 +48,6 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 			Index:    i,
 			Priority: float32(math.Inf(1)),
 		}
-		fmt.Println(n)
 		pq = append(pq, n)
 	}
 
@@ -116,8 +114,7 @@ func (idx *Index) Build() error {
 	if err != nil {
 		return errors.Wrapf(err, "buildRootNodes failed.")
 	}
-	for i, rn := range idx.roots {
-		fmt.Println(i, "-th root node building...")
+	for _, rn := range idx.roots {
 		err := rn.Build(idx.items, idx.k, idx.dim)
 		if err != nil {
 			return errors.Wrapf(err, "Build failed.")
