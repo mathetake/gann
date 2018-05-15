@@ -8,7 +8,7 @@ import (
 
 type QueueItem struct {
 	// ID ... node ID
-	ID int
+	ID string
 
 	// The index of the item in the heap.
 	Index int
@@ -49,7 +49,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 // update modifies the priority and value of an Item in the queue.
-func (pq *PriorityQueue) update(item *QueueItem, id int, priority float32) {
+func (pq *PriorityQueue) update(item *QueueItem, id string, priority float32) {
 	item.ID = id
 	item.Priority = priority
 	heap.Fix(pq, item.Index)

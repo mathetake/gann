@@ -1,5 +1,14 @@
 package item
 
+import (
+	"math/rand"
+	"time"
+)
+
+const (
+	minIteration = 20
+)
+
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {
 		panic("Dimension mismatch.")
@@ -11,15 +20,36 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 }
 
 // get normal vector which is perpendicular to the splitting hyperplane.
-// We chose the vector so that it is the average vectro of a given set of data points.
-func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) (nv Vector, err error) {
-	for _, v := range vs {
-		for i:= 0; i < dim; i++ {
-			nv[i] += v[i]
+// We chose the vector so that it is the average vector of a given set of data points.
+func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
+	lvs := len(vs)
+	iter := lvs / 20
+	if iter < minIteration {
+		iter = minIteration
+	}
+
+	rand.Seed(time.Now().UnixNano())
+
+	nvs := make([]Vector, iter)
+	for i := 0; i < iter; i++ {
+		k := rand.Intn(lvs)
+		l := rand.Intn(lvs - 1)
+		if k == l {
+			l++
+		}
+		diff := make([]float32, dim)
+		for m := 0; m < dim; m++ {
+			diff[m] = vs[k][m] - vs[l][m]
+		}
+		nvs[i] = diff
+	}
+
+	ret := make([]float32, dim)
+	for i := 0; i < dim; i++ {
+		for _, v := range nvs {
+			ret[i] += v[i] / float32(len(nvs))
 		}
 	}
-	for i:= 0; i < dim; i++ {
-		nv[i] /= float32(len(vs))
-	}
-	return nv, err
+
+	return ret
 }
