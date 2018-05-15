@@ -4,13 +4,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Min(v1, v2 float32) float32 {
-	if v1 > v2 {
-		return v2
-	}
-	return v1
-}
-
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {
 		panic("Dimension mismatch.")
@@ -33,6 +26,7 @@ func GetNormalVectorOfSplittingHyperPlane(its []Item) (nv Vector, err error) {
 // Given a set of vectors, do 2-means algorithm and returns its centroids.
 // TODO: to be implemented
 func twoMeans(its []Item) (cs map[int]Vector, err error) {
+
 	return cs, nil
 }
 

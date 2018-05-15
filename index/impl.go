@@ -62,13 +62,13 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 			heap.Push(&pq, node.QueueItem{
 				ID:       n.Children[0].ID,
 				Index:    i,
-				Priority: item.Min(d, ip),
+				Priority: min(d, ip),
 			})
 			i++
 			heap.Push(&pq, node.QueueItem{
 				ID:       n.Children[1].ID,
 				Index:    i,
-				Priority: item.Min(d, -ip),
+				Priority: min(d, -ip),
 			})
 			i++
 		}
@@ -134,4 +134,13 @@ func (idx *Index) buildRootNodes() error {
 		idx.roots = append(idx.roots, r)
 	}
 	return nil
+}
+
+
+// for float32 type
+func min(v1, v2 float32) float32 {
+	if v1 > v2 {
+		return v2
+	}
+	return v1
 }

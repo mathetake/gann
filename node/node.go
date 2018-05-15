@@ -42,7 +42,7 @@ func (n *Node) Build(its []item.Item, k int) error {
 		n.Leaf = append(n.Leaf, ids...)
 		return nil
 	}
-	err := n.buildChild(its, k)
+	err := n.buildChildren(its, k)
 	if err != nil {
 		return errors.Wrap(err, "buildChild failed.")
 	}
@@ -50,7 +50,7 @@ func (n *Node) Build(its []item.Item, k int) error {
 }
 
 // build child nodes
-func (n *Node) buildChild(its []item.Item, k int) error {
+func (n *Node) buildChildren(its []item.Item, k int) error {
 	var cMap map[string]*Node
 
 	// split descendants
@@ -73,6 +73,7 @@ func (n *Node) buildChild(its []item.Item, k int) error {
 		}
 		cMap[s].ID = n.ID + i
 		cMap[s].NDescendants = len(ds[s])
+		cMap[s].Forest = n.Forest
 		// build children nodes recursively
 		err := cMap[s].Build(ds[s], k)
 		if err != nil {
