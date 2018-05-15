@@ -1,7 +1,12 @@
 package item
 
 import (
-	"github.com/pkg/errors"
+	"math/rand"
+	"time"
+)
+
+const (
+	minIteration = 20
 )
 
 func DotProduct(v1, v2 Vector) (ret float32) {
@@ -14,27 +19,37 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 	return ret
 }
 
-func GetNormalVectorOfSplittingHyperPlane(its []Item) (nv Vector, err error) {
-	cs, err := twoMeans(its)
-	if err != nil {
-		return nv, errors.Wrap(err, "TwoMeans failed.")
+// get normal vector which is perpendicular to the splitting hyperplane.
+// We chose the vector so that it is the average vector of a given set of data points.
+func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
+	lvs := len(vs)
+	iter := lvs / 20
+	if iter < minIteration {
+		iter = minIteration
 	}
-	nv = subtract(cs[0], cs[1])
-	return nv, err
-}
 
-// Given a set of vectors, do 2-means algorithm and returns its centroids.
-func twoMeans(its []Item) (cs map[int]Vector, err error) {
-	return cs, nil
-}
+	rand.Seed(time.Now().UnixNano())
 
-func subtract(v1, v2 Vector) Vector {
-	if len(v1) != len(v2) {
-		panic("dimension mimatch")
+	nvs := make([]Vector, iter)
+	for i := 0; i < iter; i++ {
+		k := rand.Intn(lvs)
+		l := rand.Intn(lvs - 1)
+		if k == l {
+			l++
+		}
+		diff := make([]float32, dim)
+		for m := 0; m < dim; m++ {
+			diff[m] = vs[k][m] - vs[l][m]
+		}
+		nvs[i] = diff
 	}
-	v := make([]float32, len(v1))
-	for i := 0; i < len(v1); i++ {
-		v[i] = v1[i] - v2[i]
+
+	ret := make([]float32, dim)
+	for i := 0; i < dim; i++ {
+		for _, v := range nvs {
+			ret[i] += v[i] / float32(len(nvs))
+		}
 	}
-	return Vector(v)
+
+	return ret
 }

@@ -1,6 +1,7 @@
 package node
 
 import (
+	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/pkg/errors"
 )
@@ -10,12 +11,9 @@ const (
 	right = "right"
 )
 
-// ID ... identifier for nodes
-type ID int32
-
 // Node ... node for tree
 type Node struct {
-	ID ID
+	ID string
 
 	// the normal vector of the hyper plane which splits the space, represented by the node
 	Vec item.Vector
@@ -27,24 +25,25 @@ type Node struct {
 	Children []*Node
 
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
-	Leaf []item.ID
+	Leaf []int64
+
+	Forest *[]*Node
 }
 
 func (n *Node) IsLeaf() bool {
 	return len(n.Leaf) > 0
 }
 
-func (n *Node) Build(its []item.Item, k int) error {
-	// NOTE: len(its) must equal nDescendants
-	if len(its) < k {
-		ids := make([]item.ID, len(its))
+func (n *Node) Build(its []item.Item, k int, d int) error {
+	if n.NDescendants < k {
+		ids := make([]int64, len(its))
 		for i, it := range its {
 			ids[i] = it.ID
 		}
 		n.Leaf = append(n.Leaf, ids...)
 		return nil
 	}
-	err := n.buildChild(its, k)
+	err := n.buildChildren(its, k, d)
 	if err != nil {
 		return errors.Wrap(err, "buildChild failed.")
 	}
@@ -52,43 +51,48 @@ func (n *Node) Build(its []item.Item, k int) error {
 }
 
 // build child nodes
-func (n *Node) buildChild(its []item.Item, k int) error {
-	var cMap map[string]*Node
+func (n *Node) buildChildren(its []item.Item, k int, d int) error {
+	cMap := map[string]*Node{
+		left: {
+			Vec:  make([]float32, d),
+			Leaf: []int64{},
+		},
+		right: {
+			Vec:  make([]float32, d),
+			Leaf: []int64{},
+		},
+	}
 
 	// split descendants
-	ds := map[string][]item.Item{}
+	dItems := map[string][]item.Item{}
+	dVectors := map[string][]item.Vector{}
 	for _, it := range its {
 		if item.DotProduct(n.Vec, it.Vec) > 0 {
-			ds[left] = append(ds[left], it)
+			dItems[left] = append(dItems[left], it)
+			dVectors[left] = append(dVectors[left], it.Vec)
 		} else {
-			ds[right] = append(ds[right], it)
+			dItems[right] = append(dItems[right], it)
+			dVectors[right] = append(dVectors[right], it.Vec)
 		}
 	}
 
-	for i, s := range []string{left, right} {
-		if len(ds[s]) >= k {
-			nv, err := item.GetNormalVectorOfSplittingHyperPlane(ds[s])
-			if err != nil {
-				return errors.Wrap(err, "GetNormalVectorOfSplittingHyperPlane failed.")
-			}
-			cMap[s].Vec = nv
-			cMap[s].ID = n.ID + ID(i)
-			cMap[s].NDescendants = len(ds[s])
-
-			// build children nodes recursively
-			err = cMap[s].Build(ds[s], k)
-			if err != nil {
-				return errors.Wrap(err, "Build failed.")
-			}
-			// append children.
-			n.Children = append(n.Children, cMap[s])
-		} else {
-			err := cMap[s].Build(ds[s], k)
-			if err != nil {
-				return errors.Wrap(err, "Build failed.")
-			}
-			n.Children = append(n.Children, cMap[s])
+	for _, s := range []string{left, right} {
+		if len(dItems[s]) >= k {
+			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], len(n.Vec))
+			copy(cMap[s].Vec, nv)
 		}
+		cMap[s].ID = uuid.New().String()
+		cMap[s].NDescendants = len(dItems[s])
+		cMap[s].Forest = n.Forest
+		// build children nodes recursively
+		err := cMap[s].Build(dItems[s], k, d)
+		if err != nil {
+			return errors.Wrap(err, "Build failed.")
+		}
+
+		// append children.
+		n.Children = append(n.Children, cMap[s])
+		*n.Forest = append(*n.Forest, cMap[s])
 	}
 	return nil
 }

@@ -18,11 +18,11 @@ type Index struct {
 
 	// items
 	items        []item.Item
-	itemIDToItem map[item.ID]item.Item
+	itemIDToItem map[int64]item.Item
 
 	// nodes
-	nodes        []*node.Node
-	nodeIDToNode map[node.ID]*node.Node
+	Nodes        []*node.Node
+	nodeIDToNode map[string]*node.Node
 
 	// roots of trees
 	roots []*node.Node
@@ -39,10 +39,10 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int) (*Index, error) {
 	}
 
 	its := make([]item.Item, len(rawItems))
-	idToItem := make(map[item.ID]item.Item, len(rawItems))
+	idToItem := make(map[int64]item.Item, len(rawItems))
 	for i, v := range rawItems {
 		it := item.Item{
-			ID:  item.ID(i),
+			ID:  int64(i),
 			Vec: v,
 		}
 		its[i] = it
@@ -54,5 +54,6 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int) (*Index, error) {
 		nTree:        nTree,
 		items:        its,
 		itemIDToItem: idToItem,
+		nodeIDToNode: map[string]*node.Node{},
 	}, nil
 }
