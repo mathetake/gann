@@ -1,11 +1,12 @@
 package node
 
 import (
-	"github.com/mathetake/gann/item"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/mathetake/gann/item"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsLeaf(t *testing.T) {
@@ -68,7 +69,7 @@ func TestBuildChildren1(t *testing.T) {
 
 	n := Node{
 		Vec: []float32{
-			1, 1,
+			1, 0,
 		},
 		Forest: &[]*Node{},
 	}
@@ -102,6 +103,7 @@ func TestBuildChildren2(t *testing.T) {
 		for d := 0; d < dim; d++ {
 			v[d] = rand.Float32()
 		}
+		item.Normalize(v)
 		its = append(its, item.Item{
 			ID:  int64(i),
 			Vec: v,
@@ -114,6 +116,7 @@ func TestBuildChildren2(t *testing.T) {
 		for d := 0; d < dim; d++ {
 			v[d] = -rand.Float32()
 		}
+		item.Normalize(v)
 		its = append(its, item.Item{
 			ID:  int64(i + pNum),
 			Vec: v,
@@ -122,7 +125,7 @@ func TestBuildChildren2(t *testing.T) {
 
 	n := Node{
 		Vec: []float32{
-			1, 1,
+			1, 0,
 		},
 		Forest: &[]*Node{},
 	}

@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	minIteration = 200
+	maxIteration      = 200
+	twoMeansThreshold = float32(0.7)
 )
 
 func Normalize(v1 Vector) {
@@ -34,13 +35,6 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 // get normal vector which is perpendicular to the splitting hyperplane.
 func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	lvs := len(vs)
-	maxIteration := lvs / 20
-	threshold := float32(0.8)
-
-	if maxIteration < minIteration {
-		maxIteration = minIteration
-	}
-
 	// init centroids
 	rand.Seed(time.Now().UnixNano())
 	k := rand.Intn(lvs)
@@ -52,12 +46,12 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	c1 := vs[l]
 
 	ret := make([]float32, dim)
-	for i := 0; ; i++ {
+	for i := 0; i < maxIteration; i++ {
 		clusterToVecs := map[int][]Vector{}
 		for _, v := range vs {
 			ip0 := DotProduct(c0, v)
 			ip1 := DotProduct(c1, v)
-			if ip0 < ip1 {
+			if ip0 > ip1 {
 				clusterToVecs[0] = append(clusterToVecs[0], v)
 			} else {
 				clusterToVecs[1] = append(clusterToVecs[1], v)
@@ -67,20 +61,30 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		lc0 := len(clusterToVecs[0])
 		lc1 := len(clusterToVecs[1])
 
-		if (float32(lc0)/float32(lvs) <= threshold) && (float32(lc1)/float32(lvs) <= threshold) {
-			break
-		} else if i > maxIteration {
+		if (float32(lc0)/float32(lvs) <= twoMeansThreshold) && (float32(lc1)/float32(lvs) <= twoMeansThreshold) {
 			break
 		}
 
 		// update centroids
+		if lc0 == 0 || lc1 == 0 {
+			k := rand.Intn(lvs)
+			l := rand.Intn(lvs - 1)
+			if k == l {
+				l++
+			}
+			c0 = vs[k]
+			c1 = vs[l]
+			continue
+		}
+
 		c0 = make([]float32, dim)
-		c1 = make([]float32, dim)
 		for _, v := range clusterToVecs[0] {
 			for d := 0; d < dim; d++ {
 				c0[d] += v[d] / float32(lc0)
 			}
 		}
+
+		c1 = make([]float32, dim)
 		for _, v := range clusterToVecs[1] {
 			for d := 0; d < dim; d++ {
 				c1[d] += v[d] / float32(lc1)

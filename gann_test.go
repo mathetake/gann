@@ -21,7 +21,7 @@ func BenchmarkGetANNByVector1(b *testing.B) {
 		nItem:       100000,
 		nTree:       20,
 		k:           4,
-		bucketScale: 2,
+		bucketScale: 10,
 		searchNum:   50,
 	}
 	gIDx := _getTestIndex(&tmpl)
@@ -41,7 +41,7 @@ func BenchmarkGetANNByVector2(b *testing.B) {
 		dim:         300,
 		nItem:       1000000,
 		nTree:       20,
-		k:           4,
+		k:           40,
 		bucketScale: 2,
 		searchNum:   500,
 	}
