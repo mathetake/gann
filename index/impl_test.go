@@ -78,7 +78,6 @@ func TestBuild(t *testing.T) {
 				assert.Equal(t, true, len(n.Leaf) == 0)
 			}
 		}
-		t.Log("k: ", k, "finished:)")
 	}
 }
 
