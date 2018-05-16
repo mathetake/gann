@@ -21,7 +21,7 @@ func BenchmarkGetANNByVector1(b *testing.B) {
 		nItem:       100000,
 		nTree:       20,
 		k:           4,
-		bucketScale: 2,
+		bucketScale: 10,
 		searchNum:   50,
 	}
 	gIDx := _getTestIndex(&tmpl)
@@ -41,7 +41,7 @@ func BenchmarkGetANNByVector2(b *testing.B) {
 		dim:         300,
 		nItem:       1000000,
 		nTree:       20,
-		k:           4,
+		k:           40,
 		bucketScale: 2,
 		searchNum:   500,
 	}
@@ -66,6 +66,7 @@ func BenchmarkGetANNByVector3(b *testing.B) {
 		bucketScale: 2,
 		searchNum:   500,
 	}
+
 	gIDx := _getTestIndex(&tmpl)
 
 	b.ResetTimer()
@@ -82,7 +83,7 @@ func _getTestIndex(tmpl *benchTemplate) GannIndex {
 	its := _getItems(tmpl.dim, tmpl.nItem)
 
 	// create index
-	gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k)
+	gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
 	if err != nil {
 		panic(err)
 	}
@@ -102,6 +103,7 @@ func _getItems(dim int, l int) [][]float32 {
 }
 
 func _getRandomVector(dim int) []float32 {
+	rand.Seed(time.Now().UnixNano())
 	v := make([]float32, dim)
 	for j := 0; j < dim; j++ {
 		v[j] = rand.Float32()

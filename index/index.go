@@ -21,7 +21,7 @@ type Index struct {
 	itemIDToItem map[int64]item.Item
 
 	// nodes
-	Nodes        []*node.Node
+	nodes        []*node.Node
 	nodeIDToNode map[string]*node.Node
 
 	// roots of trees
@@ -33,9 +33,15 @@ func (idx *Index) getNItems() int {
 }
 
 // Initialize ... initialize Index struct.
-func Initialize(rawItems [][]float32, d int, nTree int, k int) (*Index, error) {
+func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) (*Index, error) {
 	if k >= len(rawItems) {
 		panic("k must be smaller than len(rawItems).")
+	}
+
+	if normalize {
+		for i := 0; i < len(rawItems); i++ {
+			item.Normalize(rawItems[i])
+		}
 	}
 
 	its := make([]item.Item, len(rawItems))
@@ -55,5 +61,6 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int) (*Index, error) {
 		items:        its,
 		itemIDToItem: idToItem,
 		nodeIDToNode: map[string]*node.Node{},
+		roots:        []*node.Node{},
 	}, nil
 }

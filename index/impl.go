@@ -2,12 +2,13 @@ package index
 
 import (
 	"container/heap"
+	"math"
+	"sort"
+
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/mathetake/gann/node"
 	"github.com/pkg/errors"
-	"math"
-	"sort"
 )
 
 // GetANNbyItem ... get ANNs by a item.Item
@@ -37,14 +38,15 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 		return []int64{}, errors.Errorf("Please build Index before searching.")
 	}
 
-	annMap := make(map[int64]interface{}, int(float64(num)*bucketScale))
+	bucketSize := int(float64(num) * bucketScale)
+	annMap := make(map[int64]interface{}, bucketSize)
 
 	pq := node.PriorityQueue{}
 
 	// 1.
 	for i, r := range idx.roots {
 		n := &node.QueueItem{
-			ID:       r.ID,
+			Value:    r.ID,
 			Index:    i,
 			Priority: float32(math.Inf(1)),
 		}
@@ -54,11 +56,10 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 	heap.Init(&pq)
 
 	// 2.
-	i := idx.nTree + 1
 	for {
-		q := pq.Pop().(*node.QueueItem)
+		q := heap.Pop(&pq).(*node.QueueItem)
 		d := q.Priority
-		n, ok := idx.nodeIDToNode[q.ID]
+		n, ok := idx.nodeIDToNode[q.Value]
 		if !ok {
 			panic("wrong item set in priority queue")
 		}
@@ -70,20 +71,16 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 		} else {
 			ip := item.DotProduct(n.Vec, v)
 			heap.Push(&pq, &node.QueueItem{
-				ID:       n.Children[0].ID,
-				Index:    i,
+				Value:    n.Children[0].ID,
 				Priority: min(d, ip),
 			})
-			i++
 			heap.Push(&pq, &node.QueueItem{
-				ID:       n.Children[1].ID,
-				Index:    i,
+				Value:    n.Children[1].ID,
 				Priority: min(d, -ip),
 			})
-			i++
 		}
 
-		if len(annMap) >= num || len(pq) == 0 {
+		if len(annMap) >= bucketSize || len(pq) == 0 {
 			break
 		}
 	}
@@ -110,10 +107,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 
 // Build ... build index forest.
 func (idx *Index) Build() error {
-	err := idx.buildRootNodes()
-	if err != nil {
-		return errors.Wrapf(err, "buildRootNodes failed.")
-	}
+	idx.initRootNodes()
 	for _, rn := range idx.roots {
 		err := rn.Build(idx.items, idx.k, idx.dim)
 		if err != nil {
@@ -121,18 +115,18 @@ func (idx *Index) Build() error {
 		}
 	}
 
-	if len(idx.Nodes) == 0 {
+	if len(idx.nodes) == 0 {
 		panic("# of nodes is zero.")
 	}
 
 	// build nodeIDToNode map
-	for _, n := range idx.Nodes {
+	for _, n := range idx.nodes {
 		idx.nodeIDToNode[n.ID] = n
 	}
 	return nil
 }
 
-func (idx *Index) buildRootNodes() error {
+func (idx *Index) initRootNodes() {
 	vecs := make([]item.Vector, len(idx.itemIDToItem))
 	for i, it := range idx.items {
 		vecs[i] = it.Vec
@@ -143,15 +137,14 @@ func (idx *Index) buildRootNodes() error {
 			ID:           uuid.New().String(),
 			Vec:          nv,
 			NDescendants: len(idx.items),
-			Forest:       &idx.Nodes,
+			Forest:       &idx.nodes,
 		}
 		idx.roots = append(idx.roots, r)
-		idx.Nodes = append(idx.Nodes, r)
+		idx.nodes = append(idx.nodes, r)
 	}
-	return nil
 }
 
-// for float32 type
+// for float32
 func min(v1, v2 float32) float32 {
 	if v1 > v2 {
 		return v2

@@ -1,6 +1,9 @@
 package node
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/pkg/errors"
@@ -52,6 +55,8 @@ func (n *Node) Build(its []item.Item, k int, d int) error {
 
 // build child nodes
 func (n *Node) buildChildren(its []item.Item, k int, d int) error {
+	rand.Seed(time.Now().UnixNano())
+
 	cMap := map[string]*Node{
 		left: {
 			Vec:  make([]float32, d),
@@ -67,18 +72,34 @@ func (n *Node) buildChildren(its []item.Item, k int, d int) error {
 	dItems := map[string][]item.Item{}
 	dVectors := map[string][]item.Vector{}
 	for _, it := range its {
-		if item.DotProduct(n.Vec, it.Vec) > 0 {
+		ip := item.DotProduct(n.Vec, it.Vec)
+		if ip > 0 {
 			dItems[left] = append(dItems[left], it)
 			dVectors[left] = append(dVectors[left], it.Vec)
-		} else {
+		} else if ip < 0 {
 			dItems[right] = append(dItems[right], it)
 			dVectors[right] = append(dVectors[right], it.Vec)
+		} else {
+			// if ip == 0, we assign the item randomly. Just in case.
+			if rand.Int()%2 == 0 {
+				dItems[left] = append(dItems[left], it)
+				dVectors[left] = append(dVectors[left], it.Vec)
+			} else {
+				dItems[right] = append(dItems[right], it)
+				dVectors[right] = append(dVectors[right], it.Vec)
+			}
+		}
+	}
+
+	for _, s := range []string{left, right} {
+		if len(dItems[s]) == 0 {
+			return n.buildChildren(its, k, d)
 		}
 	}
 
 	for _, s := range []string{left, right} {
 		if len(dItems[s]) >= k {
-			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], len(n.Vec))
+			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], d)
 			copy(cMap[s].Vec, nv)
 		}
 		cMap[s].ID = uuid.New().String()
