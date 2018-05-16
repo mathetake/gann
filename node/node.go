@@ -4,9 +4,10 @@ import (
 	"math/rand"
 	"time"
 
+	"sync"
+
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -29,32 +30,26 @@ type Node struct {
 
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
 	Leaf []int64
-
-	Forest *[]*Node
 }
 
 func (n *Node) IsLeaf() bool {
 	return len(n.Leaf) > 0
 }
 
-func (n *Node) Build(its []item.Item, k int, d int) error {
+func (n *Node) Build(its []item.Item, k int, d int, m *sync.Map) {
 	if n.NDescendants < k {
 		ids := make([]int64, len(its))
 		for i, it := range its {
 			ids[i] = it.ID
 		}
 		n.Leaf = append(n.Leaf, ids...)
-		return nil
+		return
 	}
-	err := n.buildChildren(its, k, d)
-	if err != nil {
-		return errors.Wrap(err, "buildChild failed.")
-	}
-	return nil
+	n.buildChildren(its, k, d, m)
 }
 
 // build child nodes
-func (n *Node) buildChildren(its []item.Item, k int, d int) error {
+func (n *Node) buildChildren(its []item.Item, k int, d int, m *sync.Map) {
 	rand.Seed(time.Now().UnixNano())
 
 	cMap := map[string]*Node{
@@ -93,27 +88,27 @@ func (n *Node) buildChildren(its []item.Item, k int, d int) error {
 
 	for _, s := range []string{left, right} {
 		if len(dItems[s]) == 0 {
-			return n.buildChildren(its, k, d)
+			ids := make([]int64, len(its))
+			for i, it := range its {
+				ids[i] = it.ID
+			}
+			n.Leaf = append(n.Leaf, ids...)
+			return
 		}
 	}
 
 	for _, s := range []string{left, right} {
 		if len(dItems[s]) >= k {
-			nv := item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], d)
-			copy(cMap[s].Vec, nv)
+			cMap[s].Vec = item.GetNormalVectorOfSplittingHyperPlane(dVectors[s], d)
 		}
 		cMap[s].ID = uuid.New().String()
 		cMap[s].NDescendants = len(dItems[s])
-		cMap[s].Forest = n.Forest
 		// build children nodes recursively
-		err := cMap[s].Build(dItems[s], k, d)
-		if err != nil {
-			return errors.Wrap(err, "Build failed.")
-		}
+		cMap[s].Build(dItems[s], k, d, m)
 
 		// append children.
 		n.Children = append(n.Children, cMap[s])
-		*n.Forest = append(*n.Forest, cMap[s])
+		m.Store(cMap[s], true)
 	}
-	return nil
+	return
 }
