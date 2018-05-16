@@ -110,10 +110,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 
 // Build ... build index forest.
 func (idx *Index) Build() error {
-	err := idx.buildRootNodes()
-	if err != nil {
-		return errors.Wrapf(err, "buildRootNodes failed.")
-	}
+	idx.initRootNodes()
 	for _, rn := range idx.roots {
 		err := rn.Build(idx.items, idx.k, idx.dim)
 		if err != nil {
@@ -121,18 +118,18 @@ func (idx *Index) Build() error {
 		}
 	}
 
-	if len(idx.Nodes) == 0 {
+	if len(idx.nodes) == 0 {
 		panic("# of nodes is zero.")
 	}
 
 	// build nodeIDToNode map
-	for _, n := range idx.Nodes {
+	for _, n := range idx.nodes {
 		idx.nodeIDToNode[n.ID] = n
 	}
 	return nil
 }
 
-func (idx *Index) buildRootNodes() error {
+func (idx *Index) initRootNodes() {
 	vecs := make([]item.Vector, len(idx.itemIDToItem))
 	for i, it := range idx.items {
 		vecs[i] = it.Vec
@@ -143,12 +140,11 @@ func (idx *Index) buildRootNodes() error {
 			ID:           uuid.New().String(),
 			Vec:          nv,
 			NDescendants: len(idx.items),
-			Forest:       &idx.Nodes,
+			Forest:       &idx.nodes,
 		}
 		idx.roots = append(idx.roots, r)
-		idx.Nodes = append(idx.Nodes, r)
+		idx.nodes = append(idx.nodes, r)
 	}
-	return nil
 }
 
 // for float32

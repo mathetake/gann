@@ -21,7 +21,7 @@ type Index struct {
 	itemIDToItem map[int64]item.Item
 
 	// nodes
-	Nodes        []*node.Node
+	nodes        []*node.Node
 	nodeIDToNode map[string]*node.Node
 
 	// roots of trees
@@ -61,5 +61,6 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) (
 		items:        its,
 		itemIDToItem: idToItem,
 		nodeIDToNode: map[string]*node.Node{},
+		roots:        []*node.Node{},
 	}, nil
 }
