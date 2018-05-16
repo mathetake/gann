@@ -5,6 +5,8 @@ import (
 	"math"
 	"sort"
 
+	"sync"
+
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/mathetake/gann/node"
@@ -64,7 +66,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 			panic("wrong item set in priority queue")
 		}
 
-		if n.NDescendants < idx.k || n.IsLeaf() {
+		if n.IsLeaf() {
 			for _, id := range n.Leaf {
 				annMap[id] = true
 			}
@@ -108,12 +110,24 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 // Build ... build index forest.
 func (idx *Index) Build() error {
 	idx.initRootNodes()
-	for _, rn := range idx.roots {
-		err := rn.Build(idx.items, idx.k, idx.dim)
-		if err != nil {
-			return errors.Wrapf(err, "Build failed.")
-		}
+
+	var wg sync.WaitGroup
+	var m sync.Map
+	for i := range idx.roots {
+		wg.Add(1)
+		ii := i
+		go func() {
+			idx.roots[ii].Build(idx.items, idx.k, idx.dim, &m)
+			wg.Done()
+		}()
 	}
+	wg.Wait()
+
+	m.Range(func(key, _ interface{}) bool {
+		n := key.(*node.Node)
+		idx.nodes = append(idx.nodes, n)
+		return true
+	})
 
 	if len(idx.nodes) == 0 {
 		panic("# of nodes is zero.")
@@ -137,7 +151,6 @@ func (idx *Index) initRootNodes() {
 			ID:           uuid.New().String(),
 			Vec:          nv,
 			NDescendants: len(idx.items),
-			Forest:       &idx.nodes,
 		}
 		idx.roots = append(idx.roots, r)
 		idx.nodes = append(idx.nodes, r)

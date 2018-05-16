@@ -92,8 +92,18 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		}
 	}
 
+	isZero := true
 	for d := 0; d < dim; d++ {
-		ret[d] += c0[d] - c1[d]
+		v := c0[d] - c1[d]
+		ret[d] += v
+		if v != 0 {
+			isZero = false
+		}
+	}
+
+	if isZero {
+		d := rand.Intn(dim)
+		ret[d] = 1
 	}
 
 	// normalize

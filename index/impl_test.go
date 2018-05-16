@@ -4,12 +4,12 @@ import (
 	"math/rand"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/bmizerany/assert"
 	"github.com/mathetake/gann/item"
 )
 
-/*
 func TestInitRootNodes(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
@@ -38,49 +38,48 @@ func TestInitRootNodes(t *testing.T) {
 
 }
 
-
 func TestBuild(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
-	k := 60
-	dim := 2
-	num := 2000
-	nTree := 10
-	var rawItems [][]float32
+	for _, k := range []int{2, 10, 100} {
+		dim := 2
+		num := 2000
+		nTree := 10
+		var rawItems [][]float32
 
-	for i := 0; i < num; i++ {
-		v := make([]float32, 2)
-		for d := 0; d < dim; d++ {
-			if rand.Int()%2 == 0 {
-				v[d] = rand.Float32()
-			} else {
-				v[d] = -rand.Float32()
+		for i := 0; i < num; i++ {
+			v := make([]float32, 2)
+			for d := 0; d < dim; d++ {
+				if rand.Int()%2 == 0 {
+					v[d] = rand.Float32()
+				} else {
+					v[d] = -rand.Float32()
+				}
+
 			}
-
+			rawItems = append(rawItems, v)
 		}
-		rawItems = append(rawItems, v)
-	}
 
-	idx, err := Initialize(rawItems, dim, nTree, k, true)
-	if err != nil {
-		panic(err)
-	}
+		rawItems[0] = rawItems[1]
+		rawItems[1] = rawItems[2]
 
-	idx.Build()
-	assert.Equal(t, nTree, len(idx.roots))
-	assert.Equal(t, true, len(idx.nodes) > nTree)
-	assert.Equal(t, true, len(idx.nodeIDToNode) > nTree)
-
-	for _, n := range idx.nodes {
-		if n.IsLeaf() {
-			assert.Equal(t, true, len(n.Leaf) < k)
-		} else {
-			assert.Equal(t, true, len(n.Leaf) == 0)
+		idx, err := Initialize(rawItems, dim, nTree, k, true)
+		if err != nil {
+			panic(err)
 		}
-		assert.Equal(t, idx.nodes, *n.Forest)
+
+		idx.Build()
+		assert.Equal(t, nTree, len(idx.roots))
+		assert.Equal(t, true, len(idx.nodes) > nTree)
+		assert.Equal(t, true, len(idx.nodeIDToNode) > nTree)
+
+		for _, n := range idx.nodes {
+			if !n.IsLeaf() {
+				assert.Equal(t, true, len(n.Leaf) == 0)
+			}
+		}
 	}
 }
-*/
 
 func TestGetANNByVector(t *testing.T) {
 	k := 10
@@ -115,7 +114,6 @@ func TestGetANNByVector(t *testing.T) {
 		} else {
 			assert.Equal(t, true, len(n.Leaf) == 0)
 		}
-		assert.Equal(t, idx.nodes, *n.Forest)
 	}
 
 	query := make([]float32, dim)

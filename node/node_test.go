@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"sync"
+
 	"github.com/mathetake/gann/item"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,10 +28,7 @@ func TestBuild(t *testing.T) {
 		{ID: 1, Vec: []float32{0.1, 0.1}},
 		{ID: 2, Vec: []float32{0.1, 0.1}},
 	}
-	err := n.Build(its, 10, 0)
-	if err != nil {
-		panic(err)
-	}
+	n.Build(its, 10, 0, &sync.Map{})
 	assert.Equal(t, []int64{1, 2}, n.Leaf)
 }
 
@@ -71,13 +70,9 @@ func TestBuildChildren1(t *testing.T) {
 		Vec: []float32{
 			1, 0,
 		},
-		Forest: &[]*Node{},
 	}
 
-	err := n.buildChildren(its, k, 2)
-	if err != nil {
-		panic(err)
-	}
+	n.buildChildren(its, k, 2, &sync.Map{})
 
 	leftChild := n.Children[0]
 	assert.Equal(t, true, leftChild.IsLeaf())
@@ -127,13 +122,9 @@ func TestBuildChildren2(t *testing.T) {
 		Vec: []float32{
 			1, 0,
 		},
-		Forest: &[]*Node{},
 	}
 
-	err := n.buildChildren(its, k, 2)
-	if err != nil {
-		panic(err)
-	}
+	n.buildChildren(its, k, 2, &sync.Map{})
 
 	leftChild := n.Children[0]
 	assert.Equal(t, true, leftChild.IsLeaf())
