@@ -51,3 +51,7 @@ func main() {
 
 - https://github.com/spotify/annoy
 - https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximate_nearest_neighbor
+
+# License
+
+MIT
