@@ -2,12 +2,13 @@ package index
 
 import (
 	"container/heap"
+	"math"
+	"sort"
+
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"
 	"github.com/mathetake/gann/node"
 	"github.com/pkg/errors"
-	"math"
-	"sort"
 )
 
 // GetANNbyItem ... get ANNs by a item.Item

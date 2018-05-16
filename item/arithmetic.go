@@ -8,19 +8,16 @@ import (
 )
 
 const (
-	minIteration = 20
+	minIteration = 200
 )
 
 func Normalize(v1 Vector) {
-	var n32 float32
-	for _, v := range v1 {
-		n32 += v * v
+	n := norm(v1)
+	if n == 0 {
+		panic("zero vector given.")
 	}
-	n64 := math.Sqrt(float64(n32))
-	n32 = float32(n64)
-
 	for i := 0; i < len(v1); i++ {
-		v1[i] = v1[i] / n32
+		v1[i] = v1[i] / n
 	}
 }
 
@@ -35,33 +32,76 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 }
 
 // get normal vector which is perpendicular to the splitting hyperplane.
-// We chose the vector so that it is the average vector of a given set of data points.
 func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	lvs := len(vs)
-	iter := lvs / 20
-	if iter < minIteration {
-		iter = minIteration
+	maxIteration := lvs / 20
+	threshold := float32(0.8)
+
+	if maxIteration < minIteration {
+		maxIteration = minIteration
 	}
 
+	// init centroids
 	rand.Seed(time.Now().UnixNano())
+	k := rand.Intn(lvs)
+	l := rand.Intn(lvs - 1)
+	if k == l {
+		l++
+	}
+	c0 := vs[k]
+	c1 := vs[l]
 
 	ret := make([]float32, dim)
-	for i := 0; i < iter; i++ {
-		k := rand.Intn(lvs)
-		l := rand.Intn(lvs - 1)
-		if k == l {
-			l++
+	for i := 0; ; i++ {
+		clusterToVecs := map[int][]Vector{}
+		for _, v := range vs {
+			ip0 := DotProduct(c0, v)
+			ip1 := DotProduct(c1, v)
+			if ip0 < ip1 {
+				clusterToVecs[0] = append(clusterToVecs[0], v)
+			} else {
+				clusterToVecs[1] = append(clusterToVecs[1], v)
+			}
 		}
-		for m := 0; m < dim; m++ {
-			ret[m] += vs[k][m] - vs[l][m]
+
+		lc0 := len(clusterToVecs[0])
+		lc1 := len(clusterToVecs[1])
+
+		if (float32(lc0)/float32(lvs) <= threshold) && (float32(lc1)/float32(lvs) <= threshold) {
+			break
+		} else if i > maxIteration {
+			break
+		}
+
+		// update centroids
+		c0 = make([]float32, dim)
+		c1 = make([]float32, dim)
+		for _, v := range clusterToVecs[0] {
+			for d := 0; d < dim; d++ {
+				c0[d] += v[d] / float32(lc0)
+			}
+		}
+		for _, v := range clusterToVecs[1] {
+			for d := 0; d < dim; d++ {
+				c1[d] += v[d] / float32(lc1)
+			}
 		}
 	}
 
-	for i := 0; i < dim; i++ {
-		ret[i] /= float32(iter)
+	for d := 0; d < dim; d++ {
+		ret[d] += c0[d] - c1[d]
 	}
 
 	// normalize
 	Normalize(ret)
 	return ret
+}
+
+func norm(v1 Vector) float32 {
+	var n32 float32
+	for _, v := range v1 {
+		n32 += v * v
+	}
+	n64 := math.Sqrt(float64(n32))
+	return float32(n64)
 }
