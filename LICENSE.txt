@@ -1,5 +1,3 @@
-/*
-
 MIT License
 
 Copyright (c) 2018 @mathetake
@@ -21,21 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
- */
-package gann
-
-import (
-	"github.com/mathetake/gann/index"
-)
-
-type GannIndex interface {
-	Build() error // build search trees.
-	GetANNbyItemID(id int64, num int, bucketScale float64) (ann []int64, err error)
-	GetANNbyVector(v []float32, num int, bucketScale float64) (ann []int64, err error)
-}
-
-// GetIndex ... get index (composed of trees, nodes, etc.)
-func GetIndex(items [][]float32, d int, nT int, k int) (GannIndex, error) {
-	return index.Initialize(items, d, nT, k)
-}
