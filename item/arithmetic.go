@@ -88,7 +88,7 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		c1 = make([]float32, dim)
 		for i := 0; i < int(float32(lc1)*centroidCalcRatio+1); i++ {
 			for d := 0; d < dim; d++ {
-				c0[d] += clusterToVecs[1][rand.Intn(lc1)][d] / float32(lc1)
+				c1[d] += clusterToVecs[1][rand.Intn(lc1)][d] / float32(lc1)
 			}
 		}
 	}
