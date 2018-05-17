@@ -11,7 +11,7 @@ type benchTemplate struct {
 	nItem       int
 	nTree       int
 	k           int
-	bucketScale float64
+	bucketScale float32
 	searchNum   int
 }
 

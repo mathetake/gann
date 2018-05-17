@@ -10,6 +10,7 @@ import (
 const (
 	maxIteration      = 200
 	twoMeansThreshold = float32(0.7)
+	centroidCalcRatio = float32(0.3)
 )
 
 func Normalize(v1 Vector) {
@@ -78,16 +79,16 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		}
 
 		c0 = make([]float32, dim)
-		for _, v := range clusterToVecs[0] {
+		for i := 0; i < int(float32(lc0)*centroidCalcRatio); i++ {
 			for d := 0; d < dim; d++ {
-				c0[d] += v[d] / float32(lc0)
+				c0[d] += clusterToVecs[0][rand.Intn(lc0)][d] / float32(lc0)
 			}
 		}
 
 		c1 = make([]float32, dim)
-		for _, v := range clusterToVecs[1] {
+		for i := 0; i < int(float32(lc1)*centroidCalcRatio+1); i++ {
 			for d := 0; d < dim; d++ {
-				c1[d] += v[d] / float32(lc1)
+				c0[d] += clusterToVecs[1][rand.Intn(lc1)][d] / float32(lc1)
 			}
 		}
 	}
@@ -104,6 +105,7 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	if isZero {
 		d := rand.Intn(dim)
 		ret[d] = 1
+		return ret
 	}
 
 	// normalize

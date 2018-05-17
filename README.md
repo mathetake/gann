@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// create index
-	gIDx, err := gann.GetIndex(rawItems, dim, nTrees, k)
+	gIDx, err := gann.GetIndex(rawItems, dim, nTrees, k, true)
 	if err != nil {
 		panic(err)
 	}
