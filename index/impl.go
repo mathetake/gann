@@ -14,7 +14,7 @@ import (
 )
 
 // GetANNbyItem ... get ANNs by a item.Item
-func (idx *Index) GetANNbyItemID(id int64, num int, searchBucket float64) (ann []int64, err error) {
+func (idx *Index) GetANNbyItemID(id int64, num int, searchBucket float32) (ann []int64, err error) {
 	it, ok := idx.itemIDToItem[id]
 	if !ok {
 		return ann, errors.Errorf("Item not found for %v", id)
@@ -23,11 +23,11 @@ func (idx *Index) GetANNbyItemID(id int64, num int, searchBucket float64) (ann [
 }
 
 // GetANNbyVector ... get ANNs by a vector
-func (idx *Index) GetANNbyVector(v []float32, num int, bucketScale float64) (ann []int64, err error) {
+func (idx *Index) GetANNbyVector(v []float32, num int, bucketScale float32) (ann []int64, err error) {
 	return idx.getANNbyVector(v, num, bucketScale)
 }
 
-func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]int64, error) {
+func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]int64, error) {
 	/*
 		1. insert root nodes into the priority queue
 		2. search all trees until len(`ann`) is enough.
@@ -40,7 +40,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float64) ([]i
 		return []int64{}, errors.Errorf("Please build Index before searching.")
 	}
 
-	bucketSize := int(float64(num) * bucketScale)
+	bucketSize := int(float32(num) * bucketScale)
 	annMap := make(map[int64]interface{}, bucketSize)
 
 	pq := node.PriorityQueue{}
