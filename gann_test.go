@@ -110,3 +110,72 @@ func _getRandomVector(dim int) []float32 {
 	}
 	return v
 }
+
+func BenchmarkBuildIndex1(b *testing.B) {
+	tmpl := benchTemplate{
+		dim:   10,
+		nItem: 1000000,
+		nTree: 20,
+		k:     40,
+	}
+
+	its := _getItems(tmpl.dim, tmpl.nItem)
+
+	b.Logf("dim: %d, # of items: %d, # of trees: %d, leaf size: %d", tmpl.dim, tmpl.nItem, tmpl.nTree, tmpl.k)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// create index
+		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+		if err != nil {
+			panic(err)
+		}
+		// build index
+		gIDx.Build()
+	}
+}
+
+func BenchmarkBuildIndex2(b *testing.B) {
+	tmpl := benchTemplate{
+		dim:   300,
+		nItem: 1000000,
+		nTree: 20,
+		k:     40,
+	}
+
+	its := _getItems(tmpl.dim, tmpl.nItem)
+
+	b.Logf("dim: %d, # of items: %d, # of trees: %d, leaf size: %d", tmpl.dim, tmpl.nItem, tmpl.nTree, tmpl.k)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// create index
+		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+		if err != nil {
+			panic(err)
+		}
+		// build index
+		gIDx.Build()
+	}
+}
+
+func BenchmarkBuildIndex3(b *testing.B) {
+	tmpl := benchTemplate{
+		dim:   1000,
+		nItem: 1000000,
+		nTree: 20,
+		k:     40,
+	}
+
+	its := _getItems(tmpl.dim, tmpl.nItem)
+
+	b.Logf("dim: %d, # of items: %d, # of trees: %d, leaf size: %d", tmpl.dim, tmpl.nItem, tmpl.nTree, tmpl.k)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// create index
+		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+		if err != nil {
+			panic(err)
+		}
+		// build index
+		gIDx.Build()
+	}
+}
