@@ -9,6 +9,7 @@ import (
 
 const (
 	maxIteration      = 200
+	maxTargetSample   = 100
 	twoMeansThreshold = float32(0.7)
 	centroidCalcRatio = float32(0.0001)
 )
@@ -49,7 +50,13 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	ret := make([]float32, dim)
 	for i := 0; i < maxIteration; i++ {
 		clusterToVecs := map[int][]Vector{}
-		for _, v := range vs {
+
+		iter := maxTargetSample
+		if len(vs) < maxTargetSample {
+			iter = len(vs)
+		}
+		for i := 0; i < iter; i++ {
+			v := vs[rand.Intn(len(vs))]
 			ip0 := DotProduct(c0, v)
 			ip1 := DotProduct(c1, v)
 			if ip0 > ip1 {
@@ -62,7 +69,7 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		lc0 := len(clusterToVecs[0])
 		lc1 := len(clusterToVecs[1])
 
-		if (float32(lc0)/float32(lvs) <= twoMeansThreshold) && (float32(lc1)/float32(lvs) <= twoMeansThreshold) {
+		if (float32(lc0)/float32(iter) <= twoMeansThreshold) && (float32(lc1)/float32(iter) <= twoMeansThreshold) {
 			break
 		}
 
