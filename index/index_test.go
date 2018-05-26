@@ -1,9 +1,10 @@
 package index
 
 import (
+	"testing"
+
 	"github.com/bmizerany/assert"
 	"github.com/mathetake/gann/item"
-	"testing"
 )
 
 func TestInitializeWithNormalize(t *testing.T) {

@@ -14,6 +14,17 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/google/go-cmp"
+  packages = [
+    "cmp",
+    "cmp/internal/diff",
+    "cmp/internal/function",
+    "cmp/internal/value"
+  ]
+  revision = "3af367b6b30c263d47e8895973edcca9a49cf029"
+  version = "v0.2.0"
+
+[[projects]]
   name = "github.com/google/uuid"
   packages = ["."]
   revision = "064e2069ce9c359c118179501254f67d7d37ba24"
@@ -50,14 +61,20 @@
   version = "v1.2.1"
 
 [[projects]]
-  name = "gopkg.in/go-playground/assert.v1"
-  packages = ["."]
-  revision = "4f4dfbc7d1c48336cf93399deae81aa9067e88af"
-  version = "v1.2.1"
+  name = "gotest.tools"
+  packages = [
+    "assert",
+    "assert/cmp",
+    "internal/difflib",
+    "internal/format",
+    "internal/source"
+  ]
+  revision = "14eefd8766a1439cddfc295ecf6327cb422b4bb2"
+  version = "v2.0.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "108fa563957f12954393dded5a013220c133d2abf050a8c7447a82a6a0374e2a"
+  inputs-digest = "3af28e00f2d393e573b6228114e5acde2bc256ee7cf123285da9a7d1590b7581"
   solver-name = "gps-cdcl"
   solver-version = 1

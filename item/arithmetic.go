@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -14,14 +15,15 @@ const (
 	centroidCalcRatio = float32(0.0001)
 )
 
-func Normalize(v1 Vector) {
-	n := norm(v1)
+func Normalize(v Vector) error {
+	n := norm(v)
 	if n == 0 {
-		panic("zero vector given.")
+		return errors.Errorf("zero vector is given.")
 	}
-	for i := 0; i < len(v1); i++ {
-		v1[i] = v1[i] / n
+	for i := 0; i < len(v); i++ {
+		v[i] = v[i] / n
 	}
+	return nil
 }
 
 func DotProduct(v1, v2 Vector) (ret float32) {
@@ -102,23 +104,17 @@ func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 		}
 	}
 
-	isZero := true
 	for d := 0; d < dim; d++ {
 		v := c0[d] - c1[d]
 		ret[d] += v
-		if v != 0 {
-			isZero = false
-		}
-	}
-
-	if isZero {
-		d := rand.Intn(dim)
-		ret[d] = 1
-		return ret
 	}
 
 	// normalize
-	Normalize(ret)
+	err := Normalize(ret)
+	if err != nil {
+		d := rand.Intn(dim)
+		ret[d] = 1
+	}
 	return ret
 }
 

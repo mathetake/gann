@@ -1,15 +1,17 @@
 package item
 
 import (
-	"github.com/bmizerany/assert"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/bmizerany/assert"
 )
 
 func TestNormalize(t *testing.T) {
 	v1 := []float32{2, 0}
-	Normalize(v1)
+	err := Normalize(v1)
+	assert.Equal(t, nil, err)
 	assert.Equal(t, []float32{1, 0}, v1)
 }
 
