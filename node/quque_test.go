@@ -6,7 +6,7 @@ import (
 
 	"math"
 
-	"gopkg.in/go-playground/assert.v1"
+	"github.com/bmizerany/assert"
 )
 
 func TestPriorityQueue(t *testing.T) {

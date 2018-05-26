@@ -7,8 +7,8 @@ import (
 
 	"sync"
 
+	"github.com/bmizerany/assert"
 	"github.com/mathetake/gann/item"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestIsLeaf(t *testing.T) {
