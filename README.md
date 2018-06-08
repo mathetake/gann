@@ -1,5 +1,6 @@
 # gann
-[![CircleCI](https://circleci.com/gh/mathetake/gann.svg?style=svg)](https://circleci.com/gh/mathetake/gann)
+[![CircleCI](https://circleci.com/gh/mathetake/gann.svg?style=shield&circle-token=9a6608c5baa7a400661a700127778a9ff8baeee3)](https://circleci.com/gh/mathetake/gann)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 gann (go-approximate-nearest-neighbor) is a library for approximate nearest neighbor search purely written in golang.
 
@@ -53,18 +54,19 @@ func main() {
 ```
 # interfaces
 
-https://github.com/mathetake/gann/blob/master/gann.go#L32-L36
 ```golang
 type GannIndex interface {
 	Build() error
-	GetANNbyItemID(id int64, num int, bucketScale float64) (ann []int64, err error)
-	GetANNbyVector(v []float32, num int, bucketScale float64) (ann []int64, err error)
+	GetANNbyItemID(id int64, num int, bucketScale float32) (ann []int64, err error)
+	GetANNbyVector(v []float32, num int, bucketScale float32) (ann []int64, err error)
 }
 ```
 
 # parameters
 
-To be explained
+See the blog post describing the parameters and algorithms in _gann_  :
+
+https://mathetake.github.io/blogs/gann.html
 
 # references
 
