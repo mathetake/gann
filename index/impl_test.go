@@ -27,10 +27,7 @@ func TestInitRootNodes(t *testing.T) {
 		rawItems = append(rawItems, v)
 	}
 
-	idx, err := Initialize(rawItems, dim, nTree, k, true)
-	if err != nil {
-		panic(err)
-	}
+	idx := Initialize(rawItems, dim, nTree, k, true)
 
 	idx.initRootNodes()
 	assert.Equal(t, nTree, len(idx.roots))
@@ -63,10 +60,7 @@ func TestBuild(t *testing.T) {
 		rawItems[0] = rawItems[1]
 		rawItems[1] = rawItems[2]
 
-		idx, err := Initialize(rawItems, dim, nTree, k, true)
-		if err != nil {
-			panic(err)
-		}
+		idx := Initialize(rawItems, dim, nTree, k, true)
 
 		idx.Build()
 		assert.Equal(t, nTree, len(idx.roots))
@@ -103,10 +97,8 @@ func TestGetANNByVector(t *testing.T) {
 	}
 
 	// build index
-	idx, err := Initialize(rawItems, dim, nTree, k, false)
-	if err != nil {
-		panic(err)
-	}
+	idx := Initialize(rawItems, dim, nTree, k, false)
+
 	idx.Build()
 	for _, n := range idx.nodes {
 		if n.IsLeaf() {

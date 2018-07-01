@@ -33,7 +33,7 @@ func (idx *Index) getNItems() int {
 }
 
 // Initialize ... initialize Index struct.
-func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) (*Index, error) {
+func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) *Index {
 	if k >= len(rawItems) {
 		panic("k must be smaller than len(rawItems).")
 	}
@@ -62,5 +62,5 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) (
 		itemIDToItem: idToItem,
 		nodeIDToNode: map[string]*node.Node{},
 		roots:        []*node.Node{},
-	}, nil
+	}
 }

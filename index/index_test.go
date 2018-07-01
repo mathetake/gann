@@ -13,10 +13,7 @@ func TestInitializeWithNormalize(t *testing.T) {
 		{0, 2},
 	}
 	d := 2
-	idx, err := Initialize(rawItems, d, 1, 1, true)
-	if err != nil {
-		panic(idx)
-	}
+	idx := Initialize(rawItems, d, 1, 1, true)
 
 	assert.Equal(t, 2, len(idx.itemIDToItem))
 	assert.Equal(t, item.Item{
@@ -35,10 +32,7 @@ func TestInitializeWithoutNormalize(t *testing.T) {
 		{0, 2},
 	}
 	d := 2
-	idx, err := Initialize(rawItems, d, 1, 1, false)
-	if err != nil {
-		panic(idx)
-	}
+	idx := Initialize(rawItems, d, 1, 1, false)
 
 	assert.Equal(t, 2, len(idx.itemIDToItem))
 	assert.Equal(t, item.Item{
