@@ -75,11 +75,19 @@ func TestBuild(t *testing.T) {
 	}
 }
 
+// This unit test is made to verify if our algorithm can correctly find
+// the `exact` neighbors. That is done by checking the ration of exact
+// neighbors in the result returned by `getANNbyVector` to searchResult.
+// is less than the given threshold.
 func TestGetANNByVector(t *testing.T) {
-	k := 10
+	k := 2
 	dim := 20
 	num := 10000
-	nTree := 10
+	nTree := 20
+	threshold := 0.5
+	searchNum := 20
+	query := make([]float32, dim)
+	query[0] = 0.1
 
 	var rawItems [][]float32
 	for i := 0; i < num; i++ {
@@ -108,9 +116,6 @@ func TestGetANNByVector(t *testing.T) {
 		}
 	}
 
-	query := make([]float32, dim)
-	query[0] = 0.1
-
 	// exact neighbors
 	aSims := map[int64]float32{}
 	ids := make([]int64, len(rawItems))
@@ -122,16 +127,24 @@ func TestGetANNByVector(t *testing.T) {
 		return -aSims[ids[i]] < -aSims[ids[j]]
 	})
 
-	searchNum := 10
-	for i, id := range ids[:searchNum] {
-		t.Logf("%d-th true neighbor: %d. The similarity: %f", i, id, aSims[id])
+	expectedIDsMap := make(map[int64]interface{}, searchNum)
+	for _, id := range ids[:searchNum] {
+		expectedIDsMap[int64(id)] = true
 	}
 
 	ass, err := idx.getANNbyVector(query, searchNum, 100.0)
 	if err != nil {
 		panic(err)
 	}
-	for i, id := range ass {
-		t.Logf("%d-th approximated neighbor: %d. The similarity: %f", i, id, item.DotProduct(rawItems[id], query))
+
+	var count int
+	for _, id := range ass {
+		if _, ok := expectedIDsMap[id]; ok {
+			count++
+		}
+	}
+
+	if float64(count)/float64(searchNum) < threshold {
+		t.Errorf("Too few exact neighbor in approximated result.")
 	}
 }
