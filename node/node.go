@@ -17,25 +17,27 @@ const (
 
 // Node ... node for tree
 type Node struct {
-	ID string
+	ID string `json:"id"`
 
 	// the normal vector of the hyper plane which splits the space, represented by the node
-	Vec item.Vector
+	Vec item.Vector `json:"vec"`
 
 	// # of descendants items
-	NDescendants int
+	NDescendants int `json:"n_descendants"`
 
 	// children of node. If len equals 0, then it is leaf node.
-	Children []*Node
+	Children []*Node `json:"children"`
 
 	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
-	Leaf []int64
+	Leaf []int64 `json:"leaf"`
 }
 
+// IsLeaf ... check if it is a leaf node
 func (n *Node) IsLeaf() bool {
 	return len(n.Leaf) > 0
 }
 
+// Build ... build
 func (n *Node) Build(its []item.Item, k int, d int, m *sync.Map) {
 	if n.NDescendants < k {
 		ids := make([]int64, len(its))

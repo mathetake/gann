@@ -16,7 +16,7 @@ The implemented algorithm is truly inspired by Annoy (https://github.com/spotify
 ```golang
 import (
 	"fmt"
-	"github.com/mathetake/gann"
+	"github.com/mathetake/gann/index"
 	"math/rand"
 	"time"
 )
@@ -39,26 +39,34 @@ func main() {
 	}
 
 	// create index
-	gIDx, err := gann.GetIndex(rawItems, dim, nTrees, k, true)
-	if err != nil {
-		panic(err)
-	}
-	// build index
+	gIDx := index.GetIndex(rawItems, dim, nTrees, k, true)
 	gIDx.Build()
 
 	// do search
 	q := []float32{0.1, 0.02, 0.001}
-	ann, err := gIDx.GetANNbyVector(q, 5, 10)
+	ann, _ := gIDx.GetANNbyVector(q, 5, 10)
 	fmt.Println("result:", ann)
 }
 ```
-# interfaces
+
+
+You can also save and load your index to/from disk:
 
 ```golang
-type GannIndex interface {
-	Build() error
-	GetANNbyItemID(id int64, num int, bucketScale float32) (ann []int64, err error)
-	GetANNbyVector(v []float32, num int, bucketScale float32) (ann []int64, err error)
+gIDx := index.GetIndex(rawItems, dim, nTrees, k, true)
+gIDx.Build()
+
+var path = "foo.gann"
+
+err := gIDx.Save(path)
+if err != nil {
+    panic(err)
+}
+
+var idx = &index.Index{}
+err := idx.Load(path)
+if err != nil {
+    panic(err)
 }
 ```
 

@@ -1,4 +1,4 @@
-// Implementation of priority queue for nodes
+// Package node ... implements priority queue for nodes
 // https://golang.org/pkg/container/heap/#example__priorityQueue
 package node
 
@@ -6,6 +6,7 @@ import (
 	"container/heap"
 )
 
+// QueueItem ... item for PQ
 type QueueItem struct {
 	// ID ... node ID
 	Value string
@@ -16,7 +17,7 @@ type QueueItem struct {
 	Priority float32
 }
 
-// A PriorityQueue implements heap.Interface and holds Items.
+// PriorityQueue ... A PriorityQueue implements heap.Interface and holds Items.
 type PriorityQueue []*QueueItem
 
 func (pq PriorityQueue) Len() int { return len(pq) }
@@ -32,6 +33,7 @@ func (pq PriorityQueue) Swap(i, j int) {
 	pq[j].Index = j
 }
 
+// Push ...
 func (pq *PriorityQueue) Push(x interface{}) {
 	n := len(*pq)
 	item := x.(*QueueItem)
@@ -39,6 +41,7 @@ func (pq *PriorityQueue) Push(x interface{}) {
 	*pq = append(*pq, item)
 }
 
+// Pop ...
 func (pq *PriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)

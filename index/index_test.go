@@ -13,20 +13,17 @@ func TestInitializeWithNormalize(t *testing.T) {
 		{0, 2},
 	}
 	d := 2
-	idx, err := Initialize(rawItems, d, 1, 1, true)
-	if err != nil {
-		panic(idx)
-	}
+	idx := Initialize(rawItems, d, 1, 1, true)
 
-	assert.Equal(t, 2, len(idx.itemIDToItem))
+	assert.Equal(t, 2, len(idx.ItemIDToItem))
 	assert.Equal(t, item.Item{
 		ID:  0,
 		Vec: []float32{1, 0},
-	}, idx.itemIDToItem[0])
+	}, idx.ItemIDToItem[0])
 	assert.Equal(t, item.Item{
 		ID:  1,
 		Vec: []float32{0, 1},
-	}, idx.itemIDToItem[1])
+	}, idx.ItemIDToItem[1])
 }
 
 func TestInitializeWithoutNormalize(t *testing.T) {
@@ -35,18 +32,15 @@ func TestInitializeWithoutNormalize(t *testing.T) {
 		{0, 2},
 	}
 	d := 2
-	idx, err := Initialize(rawItems, d, 1, 1, false)
-	if err != nil {
-		panic(idx)
-	}
+	idx := Initialize(rawItems, d, 1, 1, false)
 
-	assert.Equal(t, 2, len(idx.itemIDToItem))
+	assert.Equal(t, 2, len(idx.ItemIDToItem))
 	assert.Equal(t, item.Item{
 		ID:  0,
 		Vec: []float32{2, 0},
-	}, idx.itemIDToItem[0])
+	}, idx.ItemIDToItem[0])
 	assert.Equal(t, item.Item{
 		ID:  1,
 		Vec: []float32{0, 2},
-	}, idx.itemIDToItem[1])
+	}, idx.ItemIDToItem[1])
 }

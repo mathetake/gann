@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/mathetake/gann/index"
 )
 
 type benchTemplate struct {
@@ -79,14 +81,12 @@ func BenchmarkGetANNByVector3(b *testing.B) {
 	}
 }
 
-func _getTestIndex(tmpl *benchTemplate) GannIndex {
+func _getTestIndex(tmpl *benchTemplate) *index.Index {
 	its := _getItems(tmpl.dim, tmpl.nItem)
 
 	// create index
-	gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
-	if err != nil {
-		panic(err)
-	}
+	gIDx := index.GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+
 	// build index
 	gIDx.Build()
 	return gIDx
@@ -125,10 +125,8 @@ func BenchmarkBuildIndex1(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		// create index
-		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
-		if err != nil {
-			panic(err)
-		}
+		gIDx := index.GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+
 		// build index
 		gIDx.Build()
 	}
@@ -148,10 +146,8 @@ func BenchmarkBuildIndex2(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		// create index
-		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
-		if err != nil {
-			panic(err)
-		}
+		gIDx := index.GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+
 		// build index
 		gIDx.Build()
 	}
@@ -171,10 +167,8 @@ func BenchmarkBuildIndex3(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		// create index
-		gIDx, err := GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
-		if err != nil {
-			panic(err)
-		}
+		gIDx := index.GetIndex(its, tmpl.dim, tmpl.nTree, tmpl.k, true)
+
 		// build index
 		gIDx.Build()
 	}

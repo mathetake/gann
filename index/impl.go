@@ -13,9 +13,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GetANNbyItem ... get ANNs by a item.Item
+// GetANNbyItemID ... get ANNs by a item.Item
 func (idx *Index) GetANNbyItemID(id int64, num int, searchBucket float32) (ann []int64, err error) {
-	it, ok := idx.itemIDToItem[id]
+	it, ok := idx.ItemIDToItem[id]
 	if !ok {
 		return ann, errors.Errorf("Item not found for %v", id)
 	}
@@ -36,7 +36,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 		5. Return the top `num` ones.
 	*/
 
-	if len(idx.roots) == 0 {
+	if len(idx.Roots) == 0 {
 		return []int64{}, errors.Errorf("Please build Index before searching.")
 	}
 
@@ -46,7 +46,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 	pq := node.PriorityQueue{}
 
 	// 1.
-	for i, r := range idx.roots {
+	for i, r := range idx.Roots {
 		n := &node.QueueItem{
 			Value:    r.ID,
 			Index:    i,
@@ -61,7 +61,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 	for {
 		q := heap.Pop(&pq).(*node.QueueItem)
 		d := q.Priority
-		n, ok := idx.nodeIDToNode[q.Value]
+		n, ok := idx.NodeIDToNode[q.Value]
 		if !ok {
 			panic("wrong item set in priority queue")
 		}
@@ -92,7 +92,7 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 	ann := make([]int64, 0, len(annMap))
 	for id := range annMap {
 		ann = append(ann, id)
-		idToDist[id] = item.DotProduct(idx.itemIDToItem[id].Vec, v)
+		idToDist[id] = item.DotProduct(idx.ItemIDToItem[id].Vec, v)
 	}
 
 	// 4.
@@ -113,11 +113,11 @@ func (idx *Index) Build() error {
 
 	var wg sync.WaitGroup
 	var m sync.Map
-	for i := range idx.roots {
+	for i := range idx.Roots {
 		wg.Add(1)
 		ii := i
 		go func() {
-			idx.roots[ii].Build(idx.items, idx.k, idx.dim, &m)
+			idx.Roots[ii].Build(idx.Items, idx.K, idx.Dim, &m)
 			wg.Done()
 		}()
 	}
@@ -125,35 +125,35 @@ func (idx *Index) Build() error {
 
 	m.Range(func(key, _ interface{}) bool {
 		n := key.(*node.Node)
-		idx.nodes = append(idx.nodes, n)
+		idx.Nodes = append(idx.Nodes, n)
 		return true
 	})
 
-	if len(idx.nodes) == 0 {
+	if len(idx.Nodes) == 0 {
 		panic("# of nodes is zero.")
 	}
 
 	// build nodeIDToNode map
-	for _, n := range idx.nodes {
-		idx.nodeIDToNode[n.ID] = n
+	for _, n := range idx.Nodes {
+		idx.NodeIDToNode[n.ID] = n
 	}
 	return nil
 }
 
 func (idx *Index) initRootNodes() {
-	vecs := make([]item.Vector, len(idx.itemIDToItem))
-	for i, it := range idx.items {
+	vecs := make([]item.Vector, len(idx.ItemIDToItem))
+	for i, it := range idx.Items {
 		vecs[i] = it.Vec
 	}
-	for i := 0; i < idx.nTree; i++ {
-		nv := item.GetNormalVectorOfSplittingHyperPlane(vecs, idx.dim)
+	for i := 0; i < idx.NTree; i++ {
+		nv := item.GetNormalVectorOfSplittingHyperPlane(vecs, idx.Dim)
 		r := &node.Node{
 			ID:           uuid.New().String(),
 			Vec:          nv,
-			NDescendants: len(idx.items),
+			NDescendants: len(idx.Items),
 		}
-		idx.roots = append(idx.roots, r)
-		idx.nodes = append(idx.nodes, r)
+		idx.Roots = append(idx.Roots, r)
+		idx.Nodes = append(idx.Nodes, r)
 	}
 }
 
