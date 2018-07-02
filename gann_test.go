@@ -81,7 +81,7 @@ func BenchmarkGetANNByVector3(b *testing.B) {
 	}
 }
 
-func _getTestIndex(tmpl *benchTemplate) GannIndex {
+func _getTestIndex(tmpl *benchTemplate) *index.Index {
 	its := _getItems(tmpl.dim, tmpl.nItem)
 
 	// create index
