@@ -16,19 +16,13 @@ var tcs = []struct {
 		dim:    10,
 		nTrees: 5,
 		k:      4,
-		nItem:  1000,
+		nItem:  100,
 	},
 	{
 		dim:    100,
 		nTrees: 5,
-		k:      10,
-		nItem:  10000,
-	},
-	{
-		dim:    1000,
-		nTrees: 5,
-		k:      40,
-		nItem:  10000,
+		k:      20,
+		nItem:  1000,
 	},
 }
 
