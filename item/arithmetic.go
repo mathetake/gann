@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
 	"github.com/pkg/errors"
 )
 
@@ -15,6 +16,7 @@ const (
 	centroidCalcRatio = float32(0.0001)
 )
 
+// Normalize ... make a give vector a unit one
 func Normalize(v Vector) error {
 	n := norm(v)
 	if n == 0 {
@@ -26,6 +28,7 @@ func Normalize(v Vector) error {
 	return nil
 }
 
+// DotProduct ... calculate the dot product between given vectors
 func DotProduct(v1, v2 Vector) (ret float32) {
 	if len(v1) != len(v2) {
 		panic(fmt.Sprintf("Dimension mismatch: %d != %d", len(v1), len(v2)))
@@ -36,7 +39,7 @@ func DotProduct(v1, v2 Vector) (ret float32) {
 	return ret
 }
 
-// get normal vector which is perpendicular to the splitting hyperplane.
+// GetNormalVectorOfSplittingHyperPlane ... get normal vector which is perpendicular to the splitting hyperplane.
 func GetNormalVectorOfSplittingHyperPlane(vs []Vector, dim int) Vector {
 	lvs := len(vs)
 	// init centroids

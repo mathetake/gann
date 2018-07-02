@@ -30,8 +30,8 @@ func TestInitRootNodes(t *testing.T) {
 	idx := Initialize(rawItems, dim, nTree, k, true)
 
 	idx.initRootNodes()
-	assert.Equal(t, nTree, len(idx.roots))
-	assert.Equal(t, nTree, len(idx.nodes))
+	assert.Equal(t, nTree, len(idx.Roots))
+	assert.Equal(t, nTree, len(idx.Nodes))
 
 }
 
@@ -63,11 +63,11 @@ func TestBuild(t *testing.T) {
 		idx := Initialize(rawItems, dim, nTree, k, true)
 
 		idx.Build()
-		assert.Equal(t, nTree, len(idx.roots))
-		assert.Equal(t, true, len(idx.nodes) > nTree)
-		assert.Equal(t, true, len(idx.nodeIDToNode) > nTree)
+		assert.Equal(t, nTree, len(idx.Roots))
+		assert.Equal(t, true, len(idx.Nodes) > nTree)
+		assert.Equal(t, true, len(idx.NodeIDToNode) > nTree)
 
-		for _, n := range idx.nodes {
+		for _, n := range idx.Nodes {
 			if !n.IsLeaf() {
 				assert.Equal(t, true, len(n.Leaf) == 0)
 			}
@@ -108,7 +108,7 @@ func TestGetANNByVector(t *testing.T) {
 	idx := Initialize(rawItems, dim, nTree, k, false)
 
 	idx.Build()
-	for _, n := range idx.nodes {
+	for _, n := range idx.Nodes {
 		if n.IsLeaf() {
 			assert.Equal(t, true, len(n.Leaf) < k)
 		} else {

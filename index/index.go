@@ -5,31 +5,32 @@ import (
 	"github.com/mathetake/gann/node"
 )
 
+// Index ... a core struct in gann
 // TODO: modify for search with other distances (like L2, Hamming etc.)
 type Index struct {
-	// dimension
-	dim int
+	// Dim ... dimension of the target space
+	Dim int `json:"dim"`
 
-	// # of trees
-	nTree int
+	// NTree ... # of trees
+	NTree int `json:"n_tree"`
 
-	// minimum num of descendants which any node contains.
-	k int
+	// K ... minimum of descendants which every node contains.
+	K int `json:"k"`
 
-	// items
-	items        []item.Item
-	itemIDToItem map[int64]item.Item
+	// Items ... items
+	Items []item.Item `json:"items"`
 
-	// nodes
-	nodes        []*node.Node
-	nodeIDToNode map[string]*node.Node
+	// ItemIDToItem ... ItemIDToItem
+	ItemIDToItem map[int64]item.Item `json:"item_id_to_item"`
 
-	// roots of trees
-	roots []*node.Node
-}
+	// Nodes ... nodes
+	Nodes []*node.Node `json:"nodes"`
 
-func (idx *Index) getNItems() int {
-	return len(idx.items)
+	// NodeIDToNode ... NodeIDToNode
+	NodeIDToNode map[string]*node.Node `json:"node_id_to_node"`
+
+	// Roots ... roots of the trees
+	Roots []*node.Node `json:"roots"`
 }
 
 // Initialize ... initialize Index struct.
@@ -55,12 +56,17 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) *
 		idToItem[it.ID] = it
 	}
 	return &Index{
-		dim:          d,
-		k:            k,
-		nTree:        nTree,
-		items:        its,
-		itemIDToItem: idToItem,
-		nodeIDToNode: map[string]*node.Node{},
-		roots:        []*node.Node{},
+		Dim:          d,
+		K:            k,
+		NTree:        nTree,
+		Items:        its,
+		ItemIDToItem: idToItem,
+		NodeIDToNode: map[string]*node.Node{},
+		Roots:        []*node.Node{},
 	}
+}
+
+// GetIndex ... get index (composed of trees, nodes, etc.)
+func GetIndex(items [][]float32, d int, nT int, k int, normalize bool) *Index {
+	return Initialize(items, d, nT, k, normalize)
 }

@@ -23,19 +23,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
+
 package gann
 
 import (
 	"github.com/mathetake/gann/index"
 )
 
-type GannIndex interface {
-	Build() error // build search trees.
+// Index ... an interface for gann's index in `index` package (only used for interface declaration on its methods)
+type Index interface {
+	// Build ... build gann's index
+	Build() error
+
+	// GetANNbyItemID ... search ANNs by a given itemID
 	GetANNbyItemID(id int64, num int, bucketScale float32) (ann []int64, err error)
+
+	// GetANNbyVector ... search ANNs by a given query vector
 	GetANNbyVector(v []float32, num int, bucketScale float32) (ann []int64, err error)
+
+	// Load ... load index from disk
+	Load(path string) error
+
+	// Save ... save index to disk
+	Save(path string) error
 }
 
-// GetIndex ... get index (composed of trees, nodes, etc.)
-func GetIndex(items [][]float32, d int, nT int, k int, normalize bool) GannIndex {
-	return index.Initialize(items, d, nT, k, normalize)
-}
+var _ Index = &index.Index{}
