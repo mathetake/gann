@@ -19,7 +19,7 @@ func TestPriorityQueue(t *testing.T) {
 
 	pq := make(PriorityQueue, 4)
 
-	i := 0
+	var i = 0
 	for v, priprity := range qItems {
 		pq[i] = &QueueItem{
 			Value:    v,

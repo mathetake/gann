@@ -109,6 +109,10 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 
 // Build ... build index forest.
 func (idx *Index) Build() error {
+	if idx.isLoadedIndex {
+		return errors.Errorf("This index is loaded from disk. Rebuild on such a index is not allowed because `nodes` and `items` fields is nil.")
+	}
+
 	idx.initRootNodes()
 
 	var wg sync.WaitGroup
@@ -117,7 +121,7 @@ func (idx *Index) Build() error {
 		wg.Add(1)
 		ii := i
 		go func() {
-			idx.Roots[ii].Build(idx.Items, idx.K, idx.Dim, &m)
+			idx.Roots[ii].Build(idx.items, idx.K, idx.Dim, &m)
 			wg.Done()
 		}()
 	}
@@ -125,16 +129,16 @@ func (idx *Index) Build() error {
 
 	m.Range(func(key, _ interface{}) bool {
 		n := key.(*node.Node)
-		idx.Nodes = append(idx.Nodes, n)
+		idx.nodes = append(idx.nodes, n)
 		return true
 	})
 
-	if len(idx.Nodes) == 0 {
+	if len(idx.nodes) == 0 {
 		panic("# of nodes is zero.")
 	}
 
 	// build nodeIDToNode map
-	for _, n := range idx.Nodes {
+	for _, n := range idx.nodes {
 		idx.NodeIDToNode[n.ID] = n
 	}
 	return nil
@@ -142,7 +146,7 @@ func (idx *Index) Build() error {
 
 func (idx *Index) initRootNodes() {
 	vecs := make([]item.Vector, len(idx.ItemIDToItem))
-	for i, it := range idx.Items {
+	for i, it := range idx.items {
 		vecs[i] = it.Vec
 	}
 	for i := 0; i < idx.NTree; i++ {
@@ -150,10 +154,10 @@ func (idx *Index) initRootNodes() {
 		r := &node.Node{
 			ID:           uuid.New().String(),
 			Vec:          nv,
-			NDescendants: len(idx.Items),
+			NDescendants: len(idx.items),
 		}
 		idx.Roots = append(idx.Roots, r)
-		idx.Nodes = append(idx.Nodes, r)
+		idx.nodes = append(idx.nodes, r)
 	}
 }
 

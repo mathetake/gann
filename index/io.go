@@ -9,7 +9,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Save ... save index to disk
+// Save ... save index to disk as json format.
+// NOTE: we do not include `items` and `nodes` (not exported) fields in Index struct,
+// which means the loaded index cannot be rebuilt.
 func (idx *Index) Save(path string) error {
 	idxJSON, err := json.Marshal(idx)
 	if err != nil {
@@ -34,5 +36,8 @@ func (idx *Index) Load(path string) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to json.Unmarshal.")
 	}
+
+	// in order to prevent execution of build method on loaded index
+	idx.isLoadedIndex = true
 	return nil
 }
