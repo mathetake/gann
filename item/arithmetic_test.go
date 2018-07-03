@@ -25,8 +25,8 @@ func TestDotProduct(t *testing.T) {
 
 func TestGetNormalVectorOfSplittingHyperPlane(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	dim := 2
-	num := 5
+	var dim = 2
+	var num = 5
 	var vs []Vector
 
 	for i := 0; i < num; i++ {

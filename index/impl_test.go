@@ -13,14 +13,14 @@ import (
 func TestInitRootNodes(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
-	k := 6
-	dim := 2
-	num := 20
-	nTree := 10
+	var k = 6
+	var dim = 2
+	var num = 20
+	var nTree = 10
 	var rawItems [][]float32
 
 	for i := 0; i < num; i++ {
-		v := make([]float32, 2)
+		v := make([]float32, dim)
 		for d := 0; d < dim; d++ {
 			v[d] = rand.Float32()
 		}
@@ -31,7 +31,7 @@ func TestInitRootNodes(t *testing.T) {
 
 	idx.initRootNodes()
 	assert.Equal(t, nTree, len(idx.Roots))
-	assert.Equal(t, nTree, len(idx.Nodes))
+	assert.Equal(t, nTree, len(idx.nodes))
 
 }
 
@@ -39,13 +39,13 @@ func TestBuild(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
 	for _, k := range []int{2, 10, 100} {
-		dim := 2
-		num := 2000
-		nTree := 10
+		var dim = 2
+		var num = 2000
+		var nTree = 10
 		var rawItems [][]float32
 
 		for i := 0; i < num; i++ {
-			v := make([]float32, 2)
+			v := make([]float32, dim)
 			for d := 0; d < dim; d++ {
 				if rand.Int()%2 == 0 {
 					v[d] = rand.Float32()
@@ -64,14 +64,23 @@ func TestBuild(t *testing.T) {
 
 		idx.Build()
 		assert.Equal(t, nTree, len(idx.Roots))
-		assert.Equal(t, true, len(idx.Nodes) > nTree)
+		assert.Equal(t, true, len(idx.nodes) > nTree)
 		assert.Equal(t, true, len(idx.NodeIDToNode) > nTree)
 
-		for _, n := range idx.Nodes {
+		for _, n := range idx.nodes {
 			if !n.IsLeaf() {
 				assert.Equal(t, true, len(n.Leaf) == 0)
 			}
 		}
+	}
+}
+
+func TestBuildOnLoadedIndex(t *testing.T) {
+	var idx = &Index{}
+	idx.isLoadedIndex = true
+	err := idx.Build()
+	if err == nil {
+		t.Fatal("build method on loaded indices should return error.")
 	}
 }
 
@@ -80,13 +89,13 @@ func TestBuild(t *testing.T) {
 // neighbors in the result returned by `getANNbyVector` to searchResult.
 // is less than the given threshold.
 func TestGetANNByVector(t *testing.T) {
-	k := 2
-	dim := 20
-	num := 10000
-	nTree := 20
-	threshold := 0.5
-	searchNum := 20
-	query := make([]float32, dim)
+	var k = 2
+	var dim = 20
+	var num = 10000
+	var nTree = 20
+	var threshold = 0.01
+	var searchNum = 20
+	var query = make([]float32, dim)
 	query[0] = 0.1
 
 	var rawItems [][]float32
@@ -108,7 +117,7 @@ func TestGetANNByVector(t *testing.T) {
 	idx := Initialize(rawItems, dim, nTree, k, false)
 
 	idx.Build()
-	for _, n := range idx.Nodes {
+	for _, n := range idx.nodes {
 		if n.IsLeaf() {
 			assert.Equal(t, true, len(n.Leaf) < k)
 		} else {

@@ -22,20 +22,20 @@ import (
 )
 
 func main() {
+	var dim = 3
+	var nTrees = 2
+	var k = 10
+	var nItem = 1000
 
-	dim := 3
-	nTrees := 2
-	k := 10
-
-	rawItems := [][]float32{}
+	rawItems := make([][]float32, 0, nItem)
 	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < 1000; i++ {
-		rawItems = append(rawItems, []float32{
-			rand.Float32(),
-			rand.Float32(),
-			rand.Float32(),
-		})
+	for i := 0; i < nItem; i++ {
+		item := make([]float32, 0, dim)
+		for j := 0; j < dim; j++ {
+			item = append(item, rand.Float32())
+		}
+		rawItems = append(rawItems, item)
 	}
 
 	// create index

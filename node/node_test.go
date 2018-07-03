@@ -35,9 +35,9 @@ func TestBuild(t *testing.T) {
 // both child are supposed to be leaf nodes
 func TestBuildChildren1(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	k := 6
-	dim := 2
-	num := 5
+	var k = 6
+	var dim = 2
+	var num = 5
 	var its []item.Item
 
 	// positive side
@@ -86,10 +86,10 @@ func TestBuildChildren1(t *testing.T) {
 // Only one of children is supposed to be leaf node
 func TestBuildChildren2(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	k := 6
-	dim := 2
-	pNum := 5
-	nNum := 10
+	var k = 6
+	var dim = 2
+	var pNum = 5
+	var nNum = 10
 	var its []item.Item
 
 	// positive side

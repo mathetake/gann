@@ -17,20 +17,20 @@ type Index struct {
 	// K ... minimum of descendants which every node contains.
 	K int `json:"k"`
 
-	// Items ... items
-	Items []item.Item `json:"items"`
-
 	// ItemIDToItem ... ItemIDToItem
 	ItemIDToItem map[int64]item.Item `json:"item_id_to_item"`
-
-	// Nodes ... nodes
-	Nodes []*node.Node `json:"nodes"`
+	items        []item.Item         // items ... only used in building steps.
 
 	// NodeIDToNode ... NodeIDToNode
 	NodeIDToNode map[string]*node.Node `json:"node_id_to_node"`
+	nodes        []*node.Node          // only used in building steps.
 
 	// Roots ... roots of the trees
 	Roots []*node.Node `json:"roots"`
+
+	// used to check if the index is loaded from disk
+	// ref) Save/Load method implemented in index/io.go
+	isLoadedIndex bool
 }
 
 // Initialize ... initialize Index struct.
@@ -56,13 +56,14 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) *
 		idToItem[it.ID] = it
 	}
 	return &Index{
-		Dim:          d,
-		K:            k,
-		NTree:        nTree,
-		Items:        its,
-		ItemIDToItem: idToItem,
-		NodeIDToNode: map[string]*node.Node{},
-		Roots:        []*node.Node{},
+		Dim:           d,
+		K:             k,
+		NTree:         nTree,
+		items:         its,
+		ItemIDToItem:  idToItem,
+		NodeIDToNode:  map[string]*node.Node{},
+		Roots:         []*node.Node{},
+		isLoadedIndex: false,
 	}
 }
 

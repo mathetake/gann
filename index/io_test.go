@@ -58,6 +58,8 @@ func TestSaveAndLoad(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, true, idx.isLoadedIndex)
+
 		actualANN, _ := idx.GetANNbyVector(q, 5, 10)
 		assert.Equal(t, expectedANN, actualANN)
 
