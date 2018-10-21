@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/mathetake/gann.svg?style=shield&circle-token=9a6608c5baa7a400661a700127778a9ff8baeee3)](https://circleci.com/gh/mathetake/gann)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-![桜](file:///Users/mathetake/mathetake.github.io/blogs/assets/gann/recursive_build.png)
+![image](https://mathetake.github.io/blogs/assets/gann/recursive_build.png)
 
 gann (go-approximate-nearest-neighbor) is a library for approximate nearest neighbor search purely written in golang.
 
