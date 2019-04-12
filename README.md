@@ -21,7 +21,7 @@ import (
 	"math/rand"
 	"time"
 	
-    "github.com/mathetake/gann/index"
+	"github.com/mathetake/gann/index"
 )
 
 func main() {
@@ -48,27 +48,6 @@ func main() {
 	// do search
 	q := []float32{0.1, 0.02, 0.001}
 	ann, _ := gIDx.GetANNbyVector(q, 5, 10)
-}
-```
-
-
-You can also save and load your index to/from disk:
-
-```golang
-gIDx := index.GetIndex(rawItems, dim, nTrees, k, true)
-gIDx.Build()
-
-var path = "foo.gann"
-
-err := gIDx.Save(path)
-if err != nil {
-    panic(err)
-}
-
-var idx = &index.Index{}
-err := idx.Load(path)
-if err != nil {
-    panic(err)
 }
 ```
 

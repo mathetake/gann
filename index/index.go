@@ -27,10 +27,6 @@ type Index struct {
 
 	// Roots ... roots of the trees
 	Roots []*node.Node `json:"roots"`
-
-	// used to check if the index is loaded from disk
-	// ref) Save/Load method implemented in index/io.go
-	isLoadedIndex bool
 }
 
 // Initialize ... initialize Index struct.

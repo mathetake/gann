@@ -108,10 +108,6 @@ func (idx *Index) getANNbyVector(v []float32, num int, bucketScale float32) ([]i
 
 // Build ... build index forest.
 func (idx *Index) Build() error {
-	if idx.isLoadedIndex {
-		return errors.Errorf("This index is loaded from disk. Rebuild on such a index is not allowed because `nodes` and `items` fields is nil.")
-	}
-
 	idx.initRootNodes()
 
 	var wg sync.WaitGroup

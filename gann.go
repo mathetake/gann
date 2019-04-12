@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2018 @mathetake
+Copyright (c) 2019 @mathetake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,12 +40,6 @@ type Index interface {
 
 	// GetANNbyVector ... search ANNs by a given query vector
 	GetANNbyVector(v []float32, num int, bucketScale float32) (ann []int64, err error)
-
-	// Load ... load index from disk
-	Load(path string) error
-
-	// Save ... save index to disk
-	Save(path string) error
 }
 
 var _ Index = &index.Index{}
