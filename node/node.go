@@ -2,9 +2,8 @@ package node
 
 import (
 	"math/rand"
-	"time"
-
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/item"

@@ -4,7 +4,6 @@ import (
 	"container/heap"
 	"math"
 	"sort"
-
 	"sync"
 
 	"github.com/google/uuid"

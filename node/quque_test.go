@@ -2,9 +2,8 @@ package node
 
 import (
 	"container/heap"
-	"testing"
-
 	"math"
+	"testing"
 
 	"github.com/bmizerany/assert"
 )

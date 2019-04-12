@@ -2,10 +2,9 @@ package node
 
 import (
 	"math/rand"
+	"sync"
 	"testing"
 	"time"
-
-	"sync"
 
 	"github.com/bmizerany/assert"
 	"github.com/mathetake/gann/item"

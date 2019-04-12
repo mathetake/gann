@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"io/ioutil"
-
 	"os"
 
 	"github.com/pkg/errors"
