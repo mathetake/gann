@@ -77,7 +77,6 @@ func TestBuild(t *testing.T) {
 
 func TestBuildOnLoadedIndex(t *testing.T) {
 	var idx = &Index{}
-	idx.isLoadedIndex = true
 	err := idx.Build()
 	if err == nil {
 		t.Fatal("build method on loaded indices should return error.")

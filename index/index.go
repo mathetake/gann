@@ -52,14 +52,13 @@ func Initialize(rawItems [][]float32, d int, nTree int, k int, normalize bool) *
 		idToItem[it.ID] = it
 	}
 	return &Index{
-		Dim:           d,
-		K:             k,
-		NTree:         nTree,
-		items:         its,
-		ItemIDToItem:  idToItem,
-		NodeIDToNode:  map[string]*node.Node{},
-		Roots:         []*node.Node{},
-		isLoadedIndex: false,
+		Dim:          d,
+		K:            k,
+		NTree:        nTree,
+		items:        its,
+		ItemIDToItem: idToItem,
+		NodeIDToNode: map[string]*node.Node{},
+		Roots:        []*node.Node{},
 	}
 }
 
