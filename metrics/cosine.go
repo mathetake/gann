@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	maxIteration      = 200
-	maxTargetSample   = 100
-	twoMeansThreshold = float32(0.7)
-	centroidCalcRatio = float32(0.0001)
+	cosineMetricsMaxIteration      = 200
+	cosineMetricsMaxTargetSample   = 100
+	cosineMetricsTwoMeansThreshold = float32(0.7)
+	cosineMetricsCentroidCalcRatio = float32(0.0001)
 )
 
 type cosineDistance struct {
@@ -38,11 +38,11 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 	c0 := vs[k]
 	c1 := vs[l]
 
-	for i := 0; i < maxIteration; i++ {
+	for i := 0; i < cosineMetricsMaxIteration; i++ {
 		clusterToVecs := map[int][][]float64{}
 
-		iter := maxTargetSample
-		if len(vs) < maxTargetSample {
+		iter := cosineMetricsMaxTargetSample
+		if len(vs) < cosineMetricsMaxTargetSample {
 			iter = len(vs)
 		}
 		for i := 0; i < iter; i++ {
@@ -59,7 +59,8 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 		lc0 := len(clusterToVecs[0])
 		lc1 := len(clusterToVecs[1])
 
-		if (float32(lc0)/float32(iter) <= twoMeansThreshold) && (float32(lc1)/float32(iter) <= twoMeansThreshold) {
+		if (float32(lc0)/float32(iter) <= cosineMetricsTwoMeansThreshold) &&
+			(float32(lc1)/float32(iter) <= cosineMetricsTwoMeansThreshold) {
 			break
 		}
 
@@ -76,7 +77,7 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 		}
 
 		c0 = make([]float64, c.dim)
-		it0 := int(float32(lvs) * centroidCalcRatio)
+		it0 := int(float32(lvs) * cosineMetricsCentroidCalcRatio)
 		for i := 0; i < it0; i++ {
 			for d := 0; d < c.dim; d++ {
 				c0[d] += clusterToVecs[0][rand.Intn(lc0)][d] / float64(it0)
@@ -84,8 +85,8 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 		}
 
 		c1 = make([]float64, c.dim)
-		it1 := int(float32(lvs)*centroidCalcRatio + 1)
-		for i := 0; i < int(float32(lc1)*centroidCalcRatio+1); i++ {
+		it1 := int(float32(lvs)*cosineMetricsCentroidCalcRatio + 1)
+		for i := 0; i < int(float32(lc1)*cosineMetricsCentroidCalcRatio+1); i++ {
 			for d := 0; d < c.dim; d++ {
 				c1[d] += clusterToVecs[1][rand.Intn(lc1)][d] / float64(it1)
 			}
@@ -101,5 +102,5 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 }
 
 func (c *cosineDistance) GetDirectionPriority(base, target []float64) float64 {
-	return 0
+	return c.CalcDistance(base, target)
 }

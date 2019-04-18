@@ -9,7 +9,7 @@ import (
 	"github.com/mathetake/gann/metrics"
 )
 
-type GannIndex interface {
+type Index interface {
 	// GetANNbyItemID ... search ANNs by a given itemID
 	GetANNbyItemID(id int64, num int, bucketScale float64) (ann []int64, err error)
 
@@ -17,7 +17,7 @@ type GannIndex interface {
 	GetANNbyVector(v []float64, num int, bucketScale float64) (ann []int64, err error)
 }
 
-var _ GannIndex = &index{}
+var _ Index = &index{}
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -47,7 +47,7 @@ type index struct {
 	mux *sync.Mutex
 }
 
-func CreateNewIndex(rawItems [][]float64, dim int, nTree int, k int, mt metrics.Type) (GannIndex, error) {
+func CreateNewIndex(rawItems [][]float64, dim int, nTree int, k int, mt metrics.Type) (Index, error) {
 	// verify that given items have same dimension
 	for _, it := range rawItems {
 		if len(it) != dim {
