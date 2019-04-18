@@ -99,3 +99,7 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 	}
 	return ret
 }
+
+func (c *cosineDistance) GetDirectionPriority(base, target []float64) float64 {
+	return 0
+}

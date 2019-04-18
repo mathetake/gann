@@ -5,7 +5,7 @@ import "github.com/pkg/errors"
 type Type string
 
 const (
-	TypeCosineDistance = iota
+	TypeCosineDistance Type = "cosineDistance"
 )
 
 var (
@@ -14,9 +14,8 @@ var (
 
 type Metrics interface {
 	CalcDistance(v1, v2 []float64) float64
-	// GetNormalVectorOfSplittingHyperPlane ... get normal vector which is perpendicular to the splitting hyperplane.
 	GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []float64
-	ShouldGoLeft(base, target []float64) bool
+	GetDirectionPriority(base, target []float64) float64
 }
 
 func NewMetrics(t Type, dim int) (Metrics, error) {
