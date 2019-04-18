@@ -110,8 +110,8 @@ func (idx *index) build(nTree int) {
 	for _, rn := range idx.roots {
 		rn := rn
 		go func() {
+			defer wg.Done()
 			rn.build(idx.items)
-			wg.Done()
 		}()
 	}
 	wg.Wait()

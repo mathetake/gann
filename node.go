@@ -1,6 +1,8 @@
 package gann
 
 import (
+	"sync"
+
 	"github.com/google/uuid"
 )
 
@@ -67,22 +69,29 @@ func (n *node) buildChildren(its []*item) {
 		}
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(len(directions))
 	for _, s := range directions {
-		n := &node{
-			vec:    n.idxPtr.metrics.GetNormalVectorOfSplittingHyperPlane(dVectors[s]),
-			id:     nodeId(uuid.New().String()),
-			idxPtr: n.idxPtr,
-		}
+		s := s
+		go func() {
+			defer wg.Done()
+			n := &node{
+				vec:    n.idxPtr.metrics.GetNormalVectorOfSplittingHyperPlane(dVectors[s]),
+				id:     nodeId(uuid.New().String()),
+				idxPtr: n.idxPtr,
+			}
 
-		n.build(dItems[s])
+			n.build(dItems[s])
 
-		// append child for the search phase
-		n.children[s] = n
+			// append child for the search phase
+			n.children[s] = n
 
-		// append child to global map for the search phase
-		n.idxPtr.mux.Lock()
-		n.idxPtr.nodeIDToNode[n.id] = n
-		n.idxPtr.mux.Unlock()
+			// append child to global map for the search phase
+			n.idxPtr.mux.Lock()
+			n.idxPtr.nodeIDToNode[n.id] = n
+			n.idxPtr.mux.Unlock()
+		}()
 	}
+	wg.Wait()
 	return
 }
