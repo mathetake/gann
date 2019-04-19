@@ -23,6 +23,10 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 		5. Return the top `num` ones.
 	*/
 
+	if len(v) != idx.dim {
+		return nil, ErrInvalidKeyVector
+	}
+
 	bucketSize := int(float64(num) * bucketScale)
 	annMap := make(map[itemId]struct{}, bucketSize)
 
@@ -42,7 +46,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 
 	// 2.
 	for {
-		q := heap.Pop(&pq).(*queueItem)
+		q, ok := heap.Pop(&pq).(*queueItem)
 		d := q.priority
 		n, ok := idx.nodeIDToNode[q.value]
 		if !ok {

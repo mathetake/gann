@@ -99,6 +99,7 @@ func (idx *index) build(items []*item, nTree int) {
 			children: map[direction]*node{},
 		}
 		idx.roots[i] = rn
+		idx.nodeIDToNode[rn.id] = rn
 	}
 
 	var wg sync.WaitGroup

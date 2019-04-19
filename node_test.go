@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/bmizerany/assert"
-
 	"github.com/mathetake/gann/metrics"
 )
 
