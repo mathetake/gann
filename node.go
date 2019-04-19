@@ -1,8 +1,6 @@
 package gann
 
 import (
-	"sync"
-
 	"github.com/google/uuid"
 )
 
@@ -32,7 +30,7 @@ type node struct {
 }
 
 func (n *node) build(its []*item) {
-	if len(its) < n.idxPtr.k {
+	if len(its) <= n.idxPtr.k {
 		n.leaf = make([]itemId, len(its))
 		for i, it := range its {
 			n.leaf[i] = it.id
@@ -42,9 +40,7 @@ func (n *node) build(its []*item) {
 	n.buildChildren(its)
 }
 
-// build child nodes
 func (n *node) buildChildren(its []*item) {
-	// split descendants
 	dItems := map[direction][]*item{}
 	dVectors := map[direction][][]float64{}
 	for _, it := range its {
@@ -57,40 +53,38 @@ func (n *node) buildChildren(its []*item) {
 		}
 	}
 
+	var shouldMerge = false
 	for _, s := range directions {
-		if len(dItems[s]) < n.idxPtr.k {
-			n.leaf = make([]itemId, len(its))
-			for i, it := range its {
-				n.leaf[i] = it.id
-			}
-			return
+		if len(dItems[s]) <= n.idxPtr.k {
+			shouldMerge = true
 		}
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(len(directions))
-	for _, s := range directions {
-		s := s
-		go func() {
-			defer wg.Done()
-			n := &node{
-				vec:      n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
-				id:       nodeId(uuid.New().String()),
-				idxPtr:   n.idxPtr,
-				children: make(map[direction]*node, len(directions)),
-			}
-
-			n.build(dItems[s])
-
-			// append child for the search phase
-			n.children[s] = n
-
-			// append child to global map for the search phase
-			n.idxPtr.mux.Lock()
-			n.idxPtr.nodeIDToNode[n.id] = n
-			n.idxPtr.mux.Unlock()
-		}()
+	if shouldMerge {
+		n.leaf = make([]itemId, len(its))
+		for i, it := range its {
+			n.leaf[i] = it.id
+		}
+		return
 	}
-	wg.Wait()
+
+	for _, s := range directions {
+		c := &node{
+			vec:      n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
+			id:       nodeId(uuid.New().String()),
+			idxPtr:   n.idxPtr,
+			children: make(map[direction]*node, len(directions)),
+		}
+
+		c.build(dItems[s])
+
+		// append child for the search phase
+		n.children[s] = c
+
+		// append child to global map for the search phase
+		n.idxPtr.mux.Lock()
+		n.idxPtr.nodeIDToNode[c.id] = c
+		n.idxPtr.mux.Unlock()
+	}
 	return
 }

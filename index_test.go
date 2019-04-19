@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/bmizerany/assert"
-
 	"github.com/mathetake/gann/metrics"
 )
 
@@ -23,6 +22,7 @@ func TestCreateNewIndex(t *testing.T) {
 		{dim: 2, num: 1000, nTree: 10, k: 2},
 		{dim: 10, num: 100, nTree: 5, k: 10},
 		{dim: 10, num: 100000, nTree: 5, k: 10},
+		{dim: 1000, num: 10000, nTree: 5, k: 10},
 	} {
 		c := c
 		t.Run(fmt.Sprintf("%d-th case", i), func(t *testing.T) {
@@ -45,7 +45,8 @@ func TestCreateNewIndex(t *testing.T) {
 				rawItems[i] = v
 			}
 
-			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree, c.k, metrics.TypeCosineDistance)
+			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree,
+				c.k, metrics.TypeCosineDistance)
 			if err != nil {
 				t.Fatal(err)
 			}
