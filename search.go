@@ -46,6 +46,10 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 
 	// 2.
 	for {
+		if len(annMap) >= bucketSize || pq.Len() < 1 {
+			break
+		}
+
 		q, ok := heap.Pop(&pq).(*queueItem)
 		d := q.priority
 		n, ok := idx.nodeIDToNode[q.value]
@@ -70,9 +74,6 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 			priority: max(d, -dp),
 		})
 
-		if len(annMap) >= bucketSize || len(pq) == 0 {
-			break
-		}
 	}
 
 	// 3.
