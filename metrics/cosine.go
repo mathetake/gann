@@ -62,8 +62,8 @@ func (c *cosineDistance) GetSplittingVector(vs [][]float64) []float64 {
 		lc0 := len(clusterToVecs[0])
 		lc1 := len(clusterToVecs[1])
 
-		if (float32(lc0)/float32(iter) <= cosineMetricsTwoMeansThreshold) &&
-			(float32(lc1)/float32(iter) <= cosineMetricsTwoMeansThreshold) {
+		if (float64(lc0)/float64(iter) <= cosineMetricsTwoMeansThreshold) &&
+			(float64(lc1)/float64(iter) <= cosineMetricsTwoMeansThreshold) {
 			break
 		}
 
