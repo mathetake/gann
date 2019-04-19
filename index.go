@@ -94,7 +94,7 @@ func (idx *index) build(nTree int) {
 	}
 
 	for i := 0; i < nTree; i++ {
-		nv := idx.metrics.GetNormalVectorOfSplittingHyperPlane(vs)
+		nv := idx.metrics.GetSplittingVector(vs)
 		rn := &node{
 			id:       nodeId(uuid.New().String()),
 			vec:      nv,

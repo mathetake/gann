@@ -33,11 +33,10 @@ type node struct {
 
 func (n *node) build(its []*item) {
 	if len(its) < n.idxPtr.k {
-		ids := make([]itemId, len(its))
+		n.leaf = make([]itemId, len(its))
 		for i, it := range its {
-			ids[i] = it.id
+			n.leaf[i] = it.id
 		}
-		n.leaf = append(n.leaf, ids...)
 		return
 	}
 	n.buildChildren(its)
@@ -49,7 +48,7 @@ func (n *node) buildChildren(its []*item) {
 	dItems := map[direction][]*item{}
 	dVectors := map[direction][][]float64{}
 	for _, it := range its {
-		if n.idxPtr.metrics.GetDirectionPriority(n.vec, it.vector) > 0 {
+		if n.idxPtr.metrics.CalcDirectionPriority(n.vec, it.vector) < 0 {
 			dItems[left] = append(dItems[left], it)
 			dVectors[left] = append(dVectors[left], it.vector)
 		} else {
@@ -60,11 +59,10 @@ func (n *node) buildChildren(its []*item) {
 
 	for _, s := range directions {
 		if len(dItems[s]) == 0 {
-			ids := make([]itemId, len(its))
+			n.leaf = make([]itemId, len(its))
 			for i, it := range its {
-				ids[i] = it.id
+				n.leaf[i] = it.id
 			}
-			n.leaf = append(n.leaf, ids...)
 			return
 		}
 	}
@@ -76,7 +74,7 @@ func (n *node) buildChildren(its []*item) {
 		go func() {
 			defer wg.Done()
 			n := &node{
-				vec:    n.idxPtr.metrics.GetNormalVectorOfSplittingHyperPlane(dVectors[s]),
+				vec:    n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
 				id:     nodeId(uuid.New().String()),
 				idxPtr: n.idxPtr,
 			}

@@ -56,7 +56,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 			continue
 		}
 
-		dp := idx.metrics.GetDirectionPriority(n.vec, v)
+		dp := idx.metrics.CalcDirectionPriority(n.vec, v)
 		heap.Push(&pq, &queueItem{
 			value:    n.children[left].id,
 			priority: max(d, dp),

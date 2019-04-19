@@ -13,15 +13,17 @@ var (
 )
 
 type Metrics interface {
+	CalcDirectionPriority(base, target []float64) float64
 	CalcDistance(v1, v2 []float64) float64
-	GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []float64
-	GetDirectionPriority(base, target []float64) float64
+	GetSplittingVector(vs [][]float64) []float64
 }
 
 func NewMetrics(t Type, dim int) (Metrics, error) {
 	switch t {
 	case TypeCosineDistance:
-		return &cosineDistance{}, nil
+		return &cosineDistance{
+			dim: dim,
+		}, nil
 	default:
 		return nil, ErrInvalidMetricsType
 	}

@@ -22,15 +22,15 @@ type cosineDistance struct {
 
 var _ Metrics = &cosineDistance{}
 
-func (c *cosineDistance) CalcDistance(v1, v2 []float64) (ret float64) {
+func (c *cosineDistance) CalcDistance(v1, v2 []float64) float64 {
+	var ret float64
 	for i := range v1 {
 		ret += v1[i] * v2[i]
 	}
-	return
+	return -ret
 }
 
-// GetNormalVectorOfSplittingHyperPlane ... get normal vector which is perpendicular to the splitting hyperplane.
-func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []float64 {
+func (c *cosineDistance) GetSplittingVector(vs [][]float64) []float64 {
 	lvs := len(vs)
 	// init centroids
 	k := rand.Intn(lvs)
@@ -104,6 +104,10 @@ func (c *cosineDistance) GetNormalVectorOfSplittingHyperPlane(vs [][]float64) []
 	return ret
 }
 
-func (c *cosineDistance) GetDirectionPriority(base, target []float64) float64 {
-	return c.CalcDistance(base, target)
+func (c *cosineDistance) CalcDirectionPriority(base, target []float64) float64 {
+	var ret float64
+	for i := range base {
+		ret += base[i] * target[i]
+	}
+	return ret
 }
