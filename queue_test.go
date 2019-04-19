@@ -17,9 +17,23 @@ func TestPriorityQueue(t *testing.T) {
 		{
 			valueToPriority: map[nodeId]float64{
 				"a": 1,
-				"b": math.Inf(0),
+				"b": math.Inf(-1),
 				"c": 3,
 				"d": 100,
+			},
+			expValues: []nodeId{
+				"b", "a", "c", "d",
+			},
+		},
+		{
+			valueToPriority: map[nodeId]float64{
+				"a": 1,
+				"b": math.Inf(-1),
+				"c": 3,
+				"d": -10,
+			},
+			expValues: []nodeId{
+				"b", "d", "a", "c",
 			},
 		},
 	} {
@@ -38,7 +52,7 @@ func TestPriorityQueue(t *testing.T) {
 			heap.Init(&pq)
 
 			for _, v := range c.expValues {
-				qi := heap.Pop(&pq).(queueItem)
+				qi := heap.Pop(&pq).(*queueItem)
 				assert.Equal(t, qi.value, v)
 			}
 		})

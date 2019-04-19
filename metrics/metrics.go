@@ -2,10 +2,10 @@ package metrics
 
 import "github.com/pkg/errors"
 
-type Type string
+type Type int
 
 const (
-	TypeCosineDistance Type = "cosineDistance"
+	TypeCosineDistance Type = iota
 )
 
 var (

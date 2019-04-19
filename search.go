@@ -24,7 +24,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 	*/
 
 	bucketSize := int(float64(num) * bucketScale)
-	annMap := make(map[itemId]interface{}, bucketSize)
+	annMap := make(map[itemId]struct{}, bucketSize)
 
 	pq := priorityQueue{}
 
@@ -33,7 +33,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 		n := &queueItem{
 			value:    r.id,
 			index:    i,
-			priority: math.Inf(1),
+			priority: math.Inf(-1),
 		}
 		pq = append(pq, n)
 	}
@@ -51,7 +51,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 
 		if len(n.leaf) > 0 {
 			for _, id := range n.leaf {
-				annMap[id] = true
+				annMap[id] = struct{}{}
 			}
 			continue
 		}
@@ -59,11 +59,11 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 		dp := idx.metrics.GetDirectionPriority(n.vec, v)
 		heap.Push(&pq, &queueItem{
 			value:    n.children[left].id,
-			priority: min(d, dp),
+			priority: max(d, dp),
 		})
 		heap.Push(&pq, &queueItem{
 			value:    n.children[right].id,
-			priority: min(d, -dp),
+			priority: max(d, -dp),
 		})
 
 		if len(annMap) >= bucketSize || len(pq) == 0 {
@@ -92,9 +92,9 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 	return ann, nil
 }
 
-func min(a, b float64) float64 {
+func max(a, b float64) float64 {
 	if a < b {
-		return a
+		return b
 	}
-	return b
+	return a
 }
