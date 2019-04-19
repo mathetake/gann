@@ -2,12 +2,17 @@ version: 2
 
 jobs:
   build:
-    working_directory: /root/gann
     docker:
-      - image: golang:1.11.7
+      - image: circleci/golang:1.11.7
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
       - run: go mod download
       - run: go test -v -race ./...
-      - run: go test -bench .
       - run: go build .
+      - save_cache:
+          key: go-mod-v1-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg/mod/cache
