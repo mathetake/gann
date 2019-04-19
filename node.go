@@ -25,7 +25,7 @@ type node struct {
 	// children of node. If len equals 0, then it is leaf node.
 	children map[direction]*node
 
-	// In our setting, a `leaf` is a kind of node with len(Leaf field) greater than zero
+	// In our setting, a `leaf` is a kind of node with len(leaf) > 0
 	leaf []itemId
 }
 
@@ -69,6 +69,7 @@ func (n *node) buildChildren(its []*item) {
 	}
 
 	for _, s := range directions {
+		// build child
 		c := &node{
 			vec:      n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
 			id:       nodeId(uuid.New().String()),
