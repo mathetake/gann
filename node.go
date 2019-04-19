@@ -58,7 +58,7 @@ func (n *node) buildChildren(its []*item) {
 	}
 
 	for _, s := range directions {
-		if len(dItems[s]) == 0 {
+		if len(dItems[s]) < n.idxPtr.k {
 			n.leaf = make([]itemId, len(its))
 			for i, it := range its {
 				n.leaf[i] = it.id
@@ -74,9 +74,10 @@ func (n *node) buildChildren(its []*item) {
 		go func() {
 			defer wg.Done()
 			n := &node{
-				vec:    n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
-				id:     nodeId(uuid.New().String()),
-				idxPtr: n.idxPtr,
+				vec:      n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
+				id:       nodeId(uuid.New().String()),
+				idxPtr:   n.idxPtr,
+				children: make(map[direction]*node, len(directions)),
 			}
 
 			n.build(dItems[s])

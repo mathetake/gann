@@ -27,27 +27,25 @@ func init() {
 type index struct {
 	metrics metrics.Metrics
 
-	// Dim ... dimension of the target space
+	// dim ... dimension of the target space
 	dim int
 
-	// K ... minimum of descendants which every node contains.
+	// k ... minimum of descendants which every node contains.
 	k int
 
-	// ItemIDToItem ... ItemIDToItem
+	// itemIDToItem ... ItemIDToItem
 	itemIDToItem map[itemId]*item
-	items        []*item // items ... only used in building steps.
 
-	// NodeIDToNode ... NodeIDToNode
+	// nodeIDToNode ... NodeIDToNode
 	nodeIDToNode map[nodeId]*node
-	nodes        []*node // only used in building steps.
 
-	// Roots ... roots of the trees
+	// roots ... roots of the trees
 	roots []*node
 
 	mux *sync.Mutex
 }
 
-func CreateNewIndex(rawItems [][]float64, dim int, nTree int, k int, mt metrics.Type) (Index, error) {
+func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, mt metrics.Type) (Index, error) {
 	// verify that given items have same dimension
 	for _, it := range rawItems {
 		if len(it) != dim {
@@ -75,7 +73,6 @@ func CreateNewIndex(rawItems [][]float64, dim int, nTree int, k int, mt metrics.
 		metrics:      m,
 		dim:          dim,
 		k:            k,
-		items:        its,
 		itemIDToItem: idToItem,
 		roots:        make([]*node, nTree),
 		nodeIDToNode: map[nodeId]*node{},
@@ -83,13 +80,13 @@ func CreateNewIndex(rawItems [][]float64, dim int, nTree int, k int, mt metrics.
 	}
 
 	// build
-	idx.build(nTree)
+	idx.build(its, nTree)
 	return idx, nil
 }
 
-func (idx *index) build(nTree int) {
+func (idx *index) build(items []*item, nTree int) {
 	vs := make([][]float64, len(idx.itemIDToItem))
-	for i, it := range idx.items {
+	for i, it := range items {
 		vs[i] = it.vector
 	}
 
@@ -102,7 +99,6 @@ func (idx *index) build(nTree int) {
 			children: map[direction]*node{},
 		}
 		idx.roots[i] = rn
-		idx.nodes = append(idx.nodes, rn)
 	}
 
 	var wg sync.WaitGroup
@@ -111,7 +107,7 @@ func (idx *index) build(nTree int) {
 		rn := rn
 		go func() {
 			defer wg.Done()
-			rn.build(idx.items)
+			rn.build(items)
 		}()
 	}
 	wg.Wait()

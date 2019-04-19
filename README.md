@@ -8,12 +8,11 @@ gann (go-approximate-nearest-neighbor) is a library for approximate nearest neig
 
 The implemented algorithm is truly inspired by Annoy (https://github.com/spotify/annoy).
 
-# feature
-1. __ONLY__ written in golang, no dependencies out of go world.
+## feature
+1. purely written in Go: no dependencies out of Go world.
 2. easy to tune with a bit of parameters
-3. __ONLY support for cosine similarity search.__ (issue: https://github.com/mathetake/gann/issues/12)
 
-# usage
+## usage
 
 ```golang
 import (
@@ -51,17 +50,17 @@ func main() {
 }
 ```
 
-# parameters
+## parameters
 
 See the blog post describing the parameters and algorithms in _gann_  :
 
 https://mathetake.github.io/blogs/gann.html
 
-# references
+## references
 
 - https://github.com/spotify/annoy
 - https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximate_nearest_neighbor
 
-# License
+## License
 
 MIT
