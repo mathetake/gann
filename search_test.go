@@ -45,8 +45,7 @@ func TestIndex_GetANNbyItemID(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			ann, err := idx.GetANNbyItemID(0, 10, 2)
-			if err != nil {
+			if _, err = idx.GetANNbyItemID(0, 10, 2); err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -93,8 +92,7 @@ func TestIndex_GetANNbyVector(t *testing.T) {
 				key[i] = rand.Float64() - 0.5
 			}
 
-			ann, err := idx.GetANNbyVector(key, 10, 2)
-			if err != nil {
+			if _, err = idx.GetANNbyVector(key, 10, 2); err != nil {
 				t.Fatal(err)
 			}
 		})
