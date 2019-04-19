@@ -90,7 +90,7 @@ func (c *cosineDistance) GetSplittingVector(vs [][]float64) []float64 {
 
 		c1 = make([]float64, c.dim)
 		it1 := int(float64(lvs)*cosineMetricsCentroidCalcRatio + 1)
-		for i := 0; i < int(float32(lc1)*cosineMetricsCentroidCalcRatio+1); i++ {
+		for i := 0; i < int(float64(lc1)*cosineMetricsCentroidCalcRatio+1); i++ {
 			for d := 0; d < c.dim; d++ {
 				c1[d] += clusterToVecs[1][rand.Intn(lc1)][d] / float64(it1)
 			}

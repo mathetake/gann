@@ -15,38 +15,53 @@ The implemented algorithm is truly inspired by Annoy (https://github.com/spotify
 ## usage
 
 ```golang
+package main
+
 import (
 	"fmt"
 	"math/rand"
+	"testing"
 	"time"
-	
-	"github.com/mathetake/gann/index"
+
+	"github.com/mathetake/gann"
+	"github.com/mathetake/gann/metrics"
 )
 
-func main() {
-	var dim = 3
-	var nTrees = 2
-	var k = 10
-	var nItem = 1000
+var (
+	dim    = 3
+	nTrees = 2
+	k      = 10
+	nItem  = 1000
+)
 
-	rawItems := make([][]float32, 0, nItem)
+func main(t *testing.T) {
+	rawItems := make([][]float64, 0, nItem)
 	rand.Seed(time.Now().UnixNano())
 
 	for i := 0; i < nItem; i++ {
-		item := make([]float32, 0, dim)
+		item := make([]float64, 0, dim)
 		for j := 0; j < dim; j++ {
-			item = append(item, rand.Float32())
+			item = append(item, rand.Float64())
 		}
 		rawItems = append(rawItems, item)
 	}
 
 	// create index
-	gIDx := index.GetIndex(rawItems, dim, nTrees, k, true)
-	gIDx.Build()
+	idx, err := gann.CreateNewIndex(rawItems, dim, nTrees, k, metrics.TypeCosineDistance)
+	if err != nil {
+		// error handling
+		return
+	}
 
-	// do search
-	q := []float32{0.1, 0.02, 0.001}
-	ann, _ := gIDx.GetANNbyVector(q, 5, 10)
+	// search
+	q := []float64{0.1, 0.02, 0.001}
+	res, err := idx.GetANNbyVector(q, 5, 10)
+	if err != nil {
+		// error handling
+		return
+	}
+
+	fmt.Printf("res: %v\n", res)
 }
 ```
 
