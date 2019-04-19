@@ -16,6 +16,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// we assume that the given vectors are already normalize, i.e. the norm equals 1
 type cosineDistance struct {
 	dim int
 }

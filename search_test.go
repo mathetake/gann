@@ -49,7 +49,6 @@ func TestIndex_GetANNbyItemID(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			fmt.Println(ann)
 		})
 	}
 }
@@ -98,7 +97,6 @@ func TestIndex_GetANNbyVector(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			fmt.Println(ann)
 		})
 	}
 }
