@@ -45,11 +45,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 	heap.Init(&pq)
 
 	// 2.
-	for {
-		if len(annMap) >= bucketSize || pq.Len() < 1 {
-			break
-		}
-
+	for pq.Len() > 0 && len(annMap) < bucketSize {
 		q, ok := heap.Pop(&pq).(*queueItem)
 		d := q.priority
 		n, ok := idx.nodeIDToNode[q.value]
@@ -64,7 +60,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 			continue
 		}
 
-		dp := idx.metrics.CalcDirectionPriority(n.vec, v)
+		dp := idx.metric.CalcDirectionPriority(n.vec, v)
 		heap.Push(&pq, &queueItem{
 			value:    n.children[left].id,
 			priority: max(d, dp),
@@ -73,7 +69,6 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 			value:    n.children[right].id,
 			priority: max(d, -dp),
 		})
-
 	}
 
 	// 3.
@@ -82,7 +77,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 	for id := range annMap {
 		iid := int64(id)
 		ann = append(ann, iid)
-		idToDist[iid] = idx.metrics.CalcDistance(idx.itemIDToItem[id].vector, v)
+		idToDist[iid] = idx.metric.CalcDistance(idx.itemIDToItem[id].vector, v)
 	}
 
 	// 4.

@@ -44,7 +44,7 @@ func (n *node) buildChildren(its []*item) {
 	dItems := map[direction][]*item{}
 	dVectors := map[direction][][]float64{}
 	for _, it := range its {
-		if n.idxPtr.metrics.CalcDirectionPriority(n.vec, it.vector) < 0 {
+		if n.idxPtr.metric.CalcDirectionPriority(n.vec, it.vector) < 0 {
 			dItems[left] = append(dItems[left], it)
 			dVectors[left] = append(dVectors[left], it.vector)
 		} else {
@@ -71,7 +71,7 @@ func (n *node) buildChildren(its []*item) {
 	for _, s := range directions {
 		// build child
 		c := &node{
-			vec:      n.idxPtr.metrics.GetSplittingVector(dVectors[s]),
+			vec:      n.idxPtr.metric.GetSplittingVector(dVectors[s]),
 			id:       nodeId(uuid.New().String()),
 			idxPtr:   n.idxPtr,
 			children: make(map[direction]*node, len(directions)),

@@ -8,8 +8,7 @@ import (
 	"time"
 
 	"github.com/bmizerany/assert"
-
-	"github.com/mathetake/gann/metrics"
+	"github.com/mathetake/gann/metric"
 )
 
 func init() {
@@ -46,8 +45,12 @@ func TestCreateNewIndex(t *testing.T) {
 				rawItems[i] = v
 			}
 
-			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree,
-				c.k, metrics.TypeCosineDistance)
+			m, err := metric.NewCosineMetric(c.dim)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree, c.k, m)
 			if err != nil {
 				t.Fatal(err)
 			}
