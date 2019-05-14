@@ -21,7 +21,7 @@ type cosineDistance struct {
 }
 
 // NewCosineMetric returns cosineDistance.
-// NOTE: We assume that the given vectors are already normalize, i.e. the norm equals 1
+// NOTE: We assume that the given vectors are already normalized, i.e. the norm equals 1
 func NewCosineMetric(dim int) (Metric, error) {
 	return &cosineDistance{
 		dim: dim,
