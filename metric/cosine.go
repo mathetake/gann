@@ -1,4 +1,4 @@
-package metrics
+package metric
 
 import (
 	"math/rand"
@@ -21,7 +21,13 @@ type cosineDistance struct {
 	dim int
 }
 
-var _ Metrics = &cosineDistance{}
+var _ Metric = &cosineDistance{}
+
+func NewCosineMetric(dim int) (Metric, error) {
+	return &cosineDistance{
+		dim: dim,
+	}, nil
+}
 
 func (c *cosineDistance) CalcDistance(v1, v2 []float64) float64 {
 	var ret float64

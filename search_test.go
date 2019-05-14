@@ -7,7 +7,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/mathetake/gann/metrics"
+	"github.com/mathetake/gann/metric"
 )
 
 func TestIndex_GetANNbyItemID(t *testing.T) {
@@ -39,8 +39,12 @@ func TestIndex_GetANNbyItemID(t *testing.T) {
 				rawItems[i] = v
 			}
 
-			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree,
-				c.k, metrics.TypeCosineDistance)
+			m, err := metric.NewCosineMetric(c.dim)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree, c.k, m)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -81,8 +85,12 @@ func TestIndex_GetANNbyVector(t *testing.T) {
 				rawItems[i] = v
 			}
 
-			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree,
-				c.k, metrics.TypeCosineDistance)
+			m, err := metric.NewCosineMetric(c.dim)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree, c.k, m)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -148,8 +156,12 @@ func TestAnnSearchAccuracy(t *testing.T) {
 				rawItems[i] = v
 			}
 
-			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree,
-				c.k, metrics.TypeCosineDistance)
+			m, err := metric.NewCosineMetric(c.dim)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			idx, err := CreateNewIndex(rawItems, c.dim, c.nTree, c.k, m)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -168,7 +180,7 @@ func TestAnnSearchAccuracy(t *testing.T) {
 			ids := make([]int64, len(rawItems))
 			for i, v := range rawItems {
 				ids[i] = int64(i)
-				aDist[int64(i)] = rawIdx.metrics.CalcDistance(v, query)
+				aDist[int64(i)] = rawIdx.metric.CalcDistance(v, query)
 			}
 			sort.Slice(ids, func(i, j int) bool {
 				return aDist[ids[i]] < aDist[ids[j]]

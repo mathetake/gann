@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/bmizerany/assert"
-	"github.com/mathetake/gann/metrics"
+	"github.com/mathetake/gann/metric"
 )
 
 func TestNodeBuild(t *testing.T) {
@@ -14,7 +14,6 @@ func TestNodeBuild(t *testing.T) {
 		vec     []float64
 		items   []*item
 		dim, k  int
-		metric  metrics.Type
 		expLeaf bool
 	}{
 		{
@@ -25,7 +24,6 @@ func TestNodeBuild(t *testing.T) {
 			},
 			k:       2,
 			dim:     2,
-			metric:  metrics.TypeCosineDistance,
 			expLeaf: true,
 		},
 		{
@@ -40,14 +38,13 @@ func TestNodeBuild(t *testing.T) {
 			},
 			k:       2,
 			dim:     2,
-			metric:  metrics.TypeCosineDistance,
 			expLeaf: false,
 		},
 	} {
 		c := c
 		i := i
 		t.Run(fmt.Sprintf("%d-th case", i), func(t *testing.T) {
-			m, err := metrics.NewMetrics(c.metric, c.dim)
+			m, err := metric.NewCosineMetric(c.dim)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -55,7 +52,7 @@ func TestNodeBuild(t *testing.T) {
 			idxPtr := &index{
 				k:            1,
 				mux:          &sync.Mutex{},
-				metrics:      m,
+				metric:       m,
 				nodeIDToNode: map[nodeId]*node{},
 			}
 

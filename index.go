@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mathetake/gann/metrics"
+	"github.com/mathetake/gann/metric"
 )
 
 type Index interface {
@@ -25,7 +25,7 @@ func init() {
 
 // Index ... a core struct in gann
 type index struct {
-	metrics metrics.Metrics
+	metric metric.Metric
 
 	// dim ... dimension of the target space
 	dim int
@@ -45,19 +45,13 @@ type index struct {
 	mux *sync.Mutex
 }
 
-func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, mt metrics.Type) (Index, error) {
+func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, m metric.Metric) (Index, error) {
 	// verify that given items have same dimension
 	for _, it := range rawItems {
 		if len(it) != dim {
 			return nil, ErrDimensionMismatch
 		}
 	}
-
-	m, err := metrics.NewMetrics(mt, dim)
-	if err != nil {
-		return nil, err
-	}
-
 	its := make([]*item, len(rawItems))
 	idToItem := make(map[itemId]*item, len(rawItems))
 	for i, v := range rawItems {
@@ -70,7 +64,7 @@ func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, mt metrics.Type) (I
 	}
 
 	idx := &index{
-		metrics:      m,
+		metric:       m,
 		dim:          dim,
 		k:            k,
 		itemIDToItem: idToItem,
@@ -91,7 +85,7 @@ func (idx *index) build(items []*item, nTree int) {
 	}
 
 	for i := 0; i < nTree; i++ {
-		nv := idx.metrics.GetSplittingVector(vs)
+		nv := idx.metric.GetSplittingVector(vs)
 		rn := &node{
 			id:       nodeId(uuid.New().String()),
 			vec:      nv,
