@@ -20,11 +20,10 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"testing"
 	"time"
 
 	"github.com/mathetake/gann"
-	"github.com/mathetake/gann/metrics"
+	"github.com/mathetake/gann/metric"
 )
 
 var (
@@ -34,7 +33,7 @@ var (
 	nItem  = 1000
 )
 
-func main(t *testing.T) {
+func main() {
 	rawItems := make([][]float64, 0, nItem)
 	rand.Seed(time.Now().UnixNano())
 
@@ -46,8 +45,14 @@ func main(t *testing.T) {
 		rawItems = append(rawItems, item)
 	}
 
+	m, err := metric.NewCosineMetric(dim)
+	if err != nil {
+		// err handling
+		return
+	}
+
 	// create index
-	idx, err := gann.CreateNewIndex(rawItems, dim, nTrees, k, metrics.TypeCosineDistance)
+	idx, err := gann.CreateNewIndex(rawItems, dim, nTrees, k, m)
 	if err != nil {
 		// error handling
 		return
