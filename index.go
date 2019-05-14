@@ -11,10 +11,10 @@ import (
 
 type Index interface {
 	// GetANNbyItemID ... search ANNs by a given itemID
-	GetANNbyItemID(id int64, num int, bucketScale float64) (ann []int64, err error)
+	GetANNbyItemID(id int64, searchNum int, bucketScale float64) (ann []int64, err error)
 
 	// GetANNbyVector ... search ANNs by a given query vector
-	GetANNbyVector(v []float64, num int, bucketScale float64) (ann []int64, err error)
+	GetANNbyVector(v []float64, searchNum int, bucketScale float64) (ann []int64, err error)
 }
 
 var _ Index = &index{}

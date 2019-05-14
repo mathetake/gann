@@ -6,15 +6,15 @@ import (
 	"sort"
 )
 
-func (idx *index) GetANNbyItemID(id int64, num int, bucketScale float64) ([]int64, error) {
+func (idx *index) GetANNbyItemID(id int64, searchNum int, bucketScale float64) ([]int64, error) {
 	it, ok := idx.itemIDToItem[itemId(id)]
 	if !ok {
 		return nil, ErrItemNotFoundOnGivenItemID
 	}
-	return idx.GetANNbyVector(it.vector, num, bucketScale)
+	return idx.GetANNbyVector(it.vector, searchNum, bucketScale)
 }
 
-func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]int64, error) {
+func (idx *index) GetANNbyVector(v []float64, searchNum int, bucketScale float64) ([]int64, error) {
 	/*
 		1. insert root nodes into the priority queue
 		2. search all trees until len(`ann`) is enough.
@@ -27,7 +27,7 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 		return nil, ErrInvalidKeyVector
 	}
 
-	bucketSize := int(float64(num) * bucketScale)
+	bucketSize := int(float64(searchNum) * bucketScale)
 	annMap := make(map[itemId]struct{}, bucketSize)
 
 	pq := priorityQueue{}
@@ -86,8 +86,8 @@ func (idx *index) GetANNbyVector(v []float64, num int, bucketScale float64) ([]i
 	})
 
 	// 5.
-	if len(ann) > num {
-		ann = ann[:num]
+	if len(ann) > searchNum {
+		ann = ann[:searchNum]
 	}
 	return ann, nil
 }
