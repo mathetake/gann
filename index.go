@@ -1,36 +1,35 @@
 package gann
 
 import (
-	"math/rand"
 	"sync"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/mathetake/gann/metric"
 )
 
+// Index is the interface of gann's search index. GetANNbyItemID and GetANNbyVector are different in the form of query.
+// GetANNbyItemID can be executed by passing a certain item's id contained in the list of items used in the index building phase.
+// GetANNbyVector allows us to pass any vector of proper dimension.
+//
+// searchNum is the number of requested approximated nearest neighbors, and bucketScale can be tuned to make balance between
+// the search result's accuracy and computational complexity in the search phase.
+//
+// see README.md for more details.
 type Index interface {
-	// GetANNbyItemID ... search ANNs by a given itemID
+	// GetANNbyItemID ... search approximate nearest neighbors by a given itemID
 	GetANNbyItemID(id int64, searchNum int, bucketScale float64) (ann []int64, err error)
 
-	// GetANNbyVector ... search ANNs by a given query vector
+	// GetANNbyVector ... search approximate nearest neighbors by a given query vector
 	GetANNbyVector(v []float64, searchNum int, bucketScale float64) (ann []int64, err error)
 }
 
-var _ Index = &index{}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-// Index ... a core struct in gann
 type index struct {
 	metric metric.Metric
 
 	// dim ... dimension of the target space
 	dim int
 
-	// k ... minimum of descendants which every node contains.
+	// k ... maximum # of items in a single leaf node
 	k int
 
 	// itemIDToItem ... ItemIDToItem
@@ -45,11 +44,20 @@ type index struct {
 	mux *sync.Mutex
 }
 
+// CreateNewIndex build a new search index for given vectors. rawItems should consist of search target vectors and
+// its slice index corresponds to the first argument id of GetANNbyItemID. For example, if we want to search approximate
+// nearest neighbors of rawItems[3], it can simply achieved by calling index.GetANNbyItemID(3, ...).
+//
+// dim is the dimension of target spaces. nTree and k are tunable parameters which affects performances of
+// the index (see README.md for details.)
+//
+// The last argument m is type of metric.Metric and represents the metric of the target search space.
+// See https://godoc.org/github.com/mathetake/gann/metric for details.
 func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, m metric.Metric) (Index, error) {
 	// verify that given items have same dimension
 	for _, it := range rawItems {
 		if len(it) != dim {
-			return nil, ErrDimensionMismatch
+			return nil, errDimensionMismatch
 		}
 	}
 	its := make([]*item, len(rawItems))
