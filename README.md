@@ -15,7 +15,7 @@ The implemented algorithm is truly inspired by Annoy (https://github.com/spotify
 
 ## installation
 
-```golang
+```
 go get github.com/mathetake/gann
 ```
 
