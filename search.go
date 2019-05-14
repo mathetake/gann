@@ -9,7 +9,7 @@ import (
 func (idx *index) GetANNbyItemID(id int64, searchNum int, bucketScale float64) ([]int64, error) {
 	it, ok := idx.itemIDToItem[itemId(id)]
 	if !ok {
-		return nil, ErrItemNotFoundOnGivenItemID
+		return nil, errItemNotFoundOnGivenItemID
 	}
 	return idx.GetANNbyVector(it.vector, searchNum, bucketScale)
 }
@@ -24,7 +24,7 @@ func (idx *index) GetANNbyVector(v []float64, searchNum int, bucketScale float64
 	*/
 
 	if len(v) != idx.dim {
-		return nil, ErrInvalidKeyVector
+		return nil, errInvalidKeyVector
 	}
 
 	bucketSize := int(float64(searchNum) * bucketScale)
@@ -50,7 +50,7 @@ func (idx *index) GetANNbyVector(v []float64, searchNum int, bucketScale float64
 		d := q.priority
 		n, ok := idx.nodeIDToNode[q.value]
 		if !ok {
-			return nil, ErrInvalidIndex
+			return nil, errInvalidIndex
 		}
 
 		if len(n.leaf) > 0 {
