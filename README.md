@@ -23,7 +23,7 @@ go get github.com/mathetake/gann
 
 ### setup phase parameters
 
-|name|type|description|run-time computational complexity|space complexity|accuracy|
+|name|type|description|run-time complexity|space complexity|accuracy|
 |:---:|:---:|:---:|:---:|:---:|:---:|
 |dim|int| dimension of target vectors| the larger, the more expensive | the larger, the more expensive |  N/A |
 |nTree|int| # of trees|the larger, the more expensive| the larger, the more expensive | the larger, the more accurate|
@@ -31,7 +31,7 @@ go get github.com/mathetake/gann
 
 ### runtime (search phase) parameters
 
-|name|type|description|computational complexity|accuracy|
+|name|type|description|time complexity|accuracy|
 |:---:|:---:|:---:|:---:|:---:|
 |searchNum|int| # of requested neighbors|the larger, the more expensive|N/A|
 |bucketScale|float64| affects the size of `bucket` |the larger, the more expensive|the larger, the more accurate|
