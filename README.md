@@ -87,7 +87,7 @@ func main() {
 |name|type|description|computational complexity|accuracy|
 |:---:|:---:|:---:|:---:|:---:|
 |searchNum|int| # of requested neighbors|the larger, the more expensive|N/A|
-|bucketScale|float64| affects the size of `bucket` for |the larger, the more expensive|the larger, the more accurate|
+|bucketScale|float64| affects the size of `bucket` |the larger, the more expensive|the larger, the more accurate|
 
 `bucketScale` affects the size of `bucket` which consists of items for exact distance calculation. 
 The actual size of the bucket is [calculated by](https://github.com/mathetake/gann/blob/357c3abd241bd6455e895a5b392251b06507a8e8/search.go#L30) `int(searchNum * bucketScale)`.
