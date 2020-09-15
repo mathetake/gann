@@ -60,6 +60,11 @@ func CreateNewIndex(rawItems [][]float64, dim, nTree, k int, m metric.Metric) (I
 			return nil, errDimensionMismatch
 		}
 	}
+
+	if len(rawItems) < 2 {
+		return nil, errNotEnoughItems
+	}
+
 	its := make([]*item, len(rawItems))
 	idToItem := make(map[itemId]*item, len(rawItems))
 	for i, v := range rawItems {
