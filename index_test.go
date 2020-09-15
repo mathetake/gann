@@ -66,3 +66,30 @@ func TestCreateNewIndex(t *testing.T) {
 	}
 
 }
+
+func TestCreateNewIndexNotEnoughItems(t *testing.T) {
+	rawItems := make([][]float64, 1)
+	rawItems[0] = []float64{1, 2, 3, 4}
+
+	m, err := metric.NewCosineMetric(4)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//1 vector is not enough
+	_, err = CreateNewIndex(rawItems, 4, 4, 2, m)
+	if err != errNotEnoughItems {
+		t.Fatalf("expected error errNotEnoughItems, got %v instead", err)
+	}
+
+	rawItems2 := make([][]float64, 2)
+	rawItems2[0] = []float64{1, 2, 3, 4}
+	rawItems2[1] = []float64{2, 2, 2, 2}
+
+	//2 vectors are ok
+	_, err = CreateNewIndex(rawItems2, 4, 4, 2, m)
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
+	}
+
+}
